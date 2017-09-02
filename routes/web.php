@@ -14,3 +14,7 @@
 $app->get('/', function () use ($app) {
     return $app->version();
 });
+
+$app->put('register', 'RegisterController@register');
+
+$app->post('login', 'AuthController@login');
