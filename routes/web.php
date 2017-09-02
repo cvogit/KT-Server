@@ -17,4 +17,4 @@ $app->get('/', function () use ($app) {
 
 $app->put('register', 'RegisterController@register');
 
-//$app->post('login', 'AuthController@login');
+$app->post('login', 'AuthController@login');
