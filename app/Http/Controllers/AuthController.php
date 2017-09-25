@@ -8,25 +8,41 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Cvogit\LumenJWT\JWT;
 
 class AuthController extends Controller
 {
+	/*
+	 * The JWT factory
+	 *
+	 */
+	private $jwt;
 
-    public function __construct()
-    {
-    }
+	public function __construct(JWT $jwt)
+	{
+		$this->jwt = $jwt;
+	}
 
-    public function login(Request $request)
-    {
-        $this->validate($request, [
-            'email'    => 'required|email|max:255',
-            'password' => 'required',
-        ]);
+	public function login(Request $request)
+	{
+		// Validate request input
+		$this->validate($request, [
+			'email'    => 'required|email|max:255',
+			'password' => 'required',
+		]);
 
-        $user = User::where('email', $request->input('email'))->first();
-        if (Hash::check($request->input('password'), $user->password))
-            return response()->json(['user' => $user->email]);
+		// Find user from db
+		$user = User::where('email', $request->input('email'))->first();
 
-        return response()->json(['user_not_found'], 404);
-    }
+		// Check user exist and correct
+		if($user == null)
+			return response()->json(['message' => "Incorrect login."], 404);
+		if (!Hash::check($request->input('password'), $user->password))
+			return response()->json(['message' => "Incorrect login."], 404);
+
+		// Create and return JWT to user
+		$token = $this->jwt->create("fake");
+
+		return response()->json(['token' => $token], 200);
+	}
 }

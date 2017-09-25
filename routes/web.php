@@ -11,10 +11,18 @@
 |
 */
 
-$app->get('/', function () use ($app) {
-    return $app->version();
+$router->get('/', function () {
+    return "Hello";
 });
 
-$app->put('register', 'RegisterController@register');
+$router->put('register', 'RegisterController@register');
 
-$app->post('login', 'AuthController@login');
+$router->get('login', 'AuthController@login');
+
+$router->group(['middleware' => 'jwt'], function () use ($router) {
+
+  $router->get('/test', function ()    {
+		return "JWT checked in.";
+  });
+
+});
