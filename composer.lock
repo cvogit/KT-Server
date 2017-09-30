@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "cvogit/lumen-jwt",
-            "version": "v1.0.1",
+            "version": "v1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cvogit/lumen-jwt.git",
-                "reference": "2421f469ad10235cbdab4f9afefa546dca720693"
+                "reference": "2984e760b50942d6eeb7ec436ee6919840e2a5a6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cvogit/lumen-jwt/zipball/2421f469ad10235cbdab4f9afefa546dca720693",
-                "reference": "2421f469ad10235cbdab4f9afefa546dca720693",
+                "url": "https://api.github.com/repos/cvogit/lumen-jwt/zipball/2984e760b50942d6eeb7ec436ee6919840e2a5a6",
+                "reference": "2984e760b50942d6eeb7ec436ee6919840e2a5a6",
                 "shasum": ""
             },
             "require": {
@@ -25,7 +25,7 @@
                 "php": "^7.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~6.0"
+                "phpunit/phpunit": "^6.2"
             },
             "type": "library",
             "autoload": {
@@ -45,7 +45,7 @@
                 }
             ],
             "description": "An implementation of firebase/php-jwt for Lumen, a Laravel micro framework.",
-            "time": "2017-09-25T04:10:52+00:00"
+            "time": "2017-09-30T06:39:30+00:00"
         },
         {
             "name": "doctrine/inflector",
@@ -1266,16 +1266,16 @@
         },
         {
             "name": "laravel/lumen-framework",
-            "version": "v5.5.0",
+            "version": "v5.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/lumen-framework.git",
-                "reference": "ca3b19caee27c01876d7263a00951f7b878bffe5"
+                "reference": "d701d463925394ca2ee46e34cced55330cca7aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/lumen-framework/zipball/ca3b19caee27c01876d7263a00951f7b878bffe5",
-                "reference": "ca3b19caee27c01876d7263a00951f7b878bffe5",
+                "url": "https://api.github.com/repos/laravel/lumen-framework/zipball/d701d463925394ca2ee46e34cced55330cca7aea",
+                "reference": "d701d463925394ca2ee46e34cced55330cca7aea",
                 "shasum": ""
             },
             "require": {
@@ -1345,7 +1345,7 @@
                 "laravel",
                 "lumen"
             ],
-            "time": "2017-09-04T17:40:09+00:00"
+            "time": "2017-09-25T13:08:00+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -2361,32 +2361,32 @@
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
-            "version": "1.0.5",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/instantiator.git",
-                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d"
+                "reference": "185b8868aa9bf7159f5f953ed5afb2d7fcdc3bda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/8e884e78f9f0eb1329e445619e04456e64d8051d",
-                "reference": "8e884e78f9f0eb1329e445619e04456e64d8051d",
+                "url": "https://api.github.com/repos/doctrine/instantiator/zipball/185b8868aa9bf7159f5f953ed5afb2d7fcdc3bda",
+                "reference": "185b8868aa9bf7159f5f953ed5afb2d7fcdc3bda",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3,<8.0-DEV"
+                "php": "^7.1"
             },
             "require-dev": {
                 "athletic/athletic": "~0.1.8",
                 "ext-pdo": "*",
                 "ext-phar": "*",
-                "phpunit/phpunit": "~4.0",
-                "squizlabs/php_codesniffer": "~2.0"
+                "phpunit/phpunit": "^6.2.3",
+                "squizlabs/php_codesniffer": "^3.0.2"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.0.x-dev"
+                    "dev-master": "1.2.x-dev"
                 }
             },
             "autoload": {
@@ -2411,7 +2411,7 @@
                 "constructor",
                 "instantiate"
             ],
-            "time": "2015-06-14T21:17:01+00:00"
+            "time": "2017-07-22T11:58:36+00:00"
         },
         {
             "name": "fzaninotto/faker",

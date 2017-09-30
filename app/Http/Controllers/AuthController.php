@@ -9,6 +9,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Cvogit\LumenJWT\JWT;
+use \Exception;
+
 
 class AuthController extends Controller
 {
@@ -41,8 +43,12 @@ class AuthController extends Controller
 			return response()->json(['message' => "Incorrect login."], 404);
 
 		// Create and return JWT to user
-		$token = $this->jwt->create("fake");
-
+		try {
+			$token = $this->jwt->create();
+		}	catch(\Exception $e){
+			abort(404, "Could not create JWT.");
+    }
+    
 		return response()->json(['token' => $token], 200);
 	}
 }
