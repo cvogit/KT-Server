@@ -65,6 +65,8 @@ $app->singleton(
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
+    'manager' => App\Http\Middleware\ManagerGuard::class,
+    'teacher' => App\Http\Middleware\TeacherGuard::class,
 ]);
 
 $app->routeMiddleware([
