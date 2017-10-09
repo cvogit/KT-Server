@@ -25,6 +25,13 @@ class AuthController extends Controller
 		$this->jwt = $jwt;
 	}
 
+	/**
+	 * Check user login is valid and active
+	 *
+	 * @param \Illuminate\Http\Request
+	 *
+	 * @return mixed 
+	 */
 	public function login(Request $request)
 	{
 		// Validate request input
@@ -41,12 +48,14 @@ class AuthController extends Controller
 			return response()->json(['message' => "Incorrect login."], 404);
 		if (!Hash::check($request->input('password'), $user->password))
 			return response()->json(['message' => "Incorrect login."], 404);
+		if (!$user->active)
+			return response()->json(['message' => "The account is not activated."], 404);
 
-		// Create and return JWT to user
+		// Create and return JWT to user, signed with user id
 		try {
-			$token = $this->jwt->create();
+			$token = $this->jwt->create($user->id);
 		}	catch(\Exception $e){
-			abort(404, "Could not create JWT.");
+			abort(404, "Could not create JWT, cvogit/lumen-jwt errors.");
     }
     
 		return response()->json(['token' => $token], 200);

@@ -47,7 +47,7 @@ class RegisterController extends Controller
             return response()->json(["register" => 0]);
 
         $user = $this->create($request->all());
-        return response()->json(["register" => 1, "email" => $user->email]);
+        return response()->json(['message' => "Registration successful, awaiting approval."], 200);
     }
 
     /**
