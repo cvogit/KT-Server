@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\User;
+use \Exception;
 use Cvogit\LumenJWT\JWT;
 use Illuminate\Http\Request;
 
@@ -16,15 +17,28 @@ class JWTHelper
 	private $jwt;
 
 	/**
-	 * The Request
+	 * The claims
 	 *
 	 * @var \Illuminate\Http\Request
 	 */
-	private $request;
+	private $claims;
 
 	public function __construct(JWT $jwt)
 	{
 		$this->jwt = $jwt;
+	}
+
+	/**
+	 * Extracts the claims from JWT
+	 *
+	 */
+	public function extractClaims()
+	{
+		try {
+			$this->claims = $this->jwt->extract($this->request);
+		} catch (Exception $e) {
+			return response()->json(['message' => "Invalid JWT."], 404);
+		}
 	}
 
 	/**
@@ -35,7 +49,10 @@ class JWTHelper
 	public function setRequest(Request $request)
 	{
 		$this->request = $request;
+		$this->extractClaims();
+		$this->updateLoginTime();
 	}
+
 
 	/**
 	 * Return the user making the request
@@ -44,17 +61,23 @@ class JWTHelper
 	 */
 	public function getUser()
 	{
-		// Decode JWT
-		try
-		{
-			$decoded = $this->jwt->extract($this->request);
-		} catch (Exception $e) {
-			abort(404, "Invalid Request.");
-		}
-
 		// Fetch user using id
-		$user = User::where('id', $decoded['jti'])->first();
+		$user = User::where('id', $this->claims['jti'])->first();
 
 		return $user;
+	}
+
+	/**
+	 * Update user lastConnectTime
+	 *
+	 */
+	public function updateLoginTime()
+	{
+		$user = $this->getUser();
+
+		date_default_timezone_set('America/Los_Angeles');
+		$user->lastLogin = date('m/d/Y h:i:s a');
+		
+		$user->save();
 	}
 }

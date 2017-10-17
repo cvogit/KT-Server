@@ -15,7 +15,7 @@ class ManagerGuard
 	 *
 	 * @var App\Helpers\JWTHelper
 	 */
-	private $req;
+	private $jwt;
 	
 	/**
 	 * Create a new middleware instance.
@@ -23,10 +23,10 @@ class ManagerGuard
 	 * @param  \Illuminate\Contracts\Auth\Factory  $auth
 	 * @return void
 	 */
-	public function __construct(JWTHelper $req, Request $request)
+	public function __construct(JWTHelper $jwt, Request $request)
 	{
-		$this->req = $req;
-		$this->req->setRequest($request);
+		$this->jwt = $jwt;
+		$this->jwt->setRequest($request);
 	}
 
 	/**
@@ -39,7 +39,7 @@ class ManagerGuard
 	public function handle(Request $request, Closure $next)
 	{
 		//Fetch user from request
-		$user = $this->req->getUser();
+		$user = $this->jwt->getUser();
 
 		if($user == null)
 			return response()->json(['message' => "Invalid request, user is not a manager."], 404);

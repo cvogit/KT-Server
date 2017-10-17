@@ -3,14 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use Auth;
+use App\Helpers\UserHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Cvogit\LumenJWT\JWT;
 use \Exception;
-
 
 class AuthController extends Controller
 {
@@ -55,8 +54,10 @@ class AuthController extends Controller
 		try {
 			$token = $this->jwt->create($user->id);
 		}	catch(\Exception $e){
-			abort(404, "Could not create JWT, cvogit/lumen-jwt errors.");
+			return response()->json(['message' => "Could not create JWT, cvogit/lumen-jwt errors."], 404);
     }
+
+    UserHelpers::updateUser($user);
     
 		return response()->json(['token' => $token], 200);
 	}

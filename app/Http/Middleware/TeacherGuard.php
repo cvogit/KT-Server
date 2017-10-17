@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Teacher;
 use App\Helpers\JWTHelper;
 use Closure;
-use \Exception;
 use Illuminate\Http\Request;
 
 class TeacherGuard
@@ -15,7 +14,7 @@ class TeacherGuard
 	 *
 	 * @var App\Helpers\JWTHelper
 	 */
-	private $req;
+	private $jwt;
 	
 	/**
 	 * Create a new middleware instance.
@@ -25,8 +24,8 @@ class TeacherGuard
 	 */
 	public function __construct(JWTHelper $req, Request $request)
 	{
-		$this->req = $req;
-		$this->req->setRequest($request);
+		$this->jwt = $jwt;
+		$this->jwt->setRequest($request);
 	}
 
 	/**
@@ -40,7 +39,7 @@ class TeacherGuard
 	{
 
 		//Fetch user from request
-		$user = $this->req->getUser();
+		$user = $this->jwt->getUser();
 
 		if($user == null)
 			return response()->json(['message' => "Invalid request, user is not a manager."], 404);

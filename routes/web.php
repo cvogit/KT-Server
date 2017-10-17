@@ -15,7 +15,7 @@ $router->get('/', function () {
     return "Hello";
 });
 
-$router->put('register', 'RegisterController@register');
+$router->post('register', 'RegisterController@register');
 
 $router->get('login', 'AuthController@login');
 
@@ -25,30 +25,32 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	// Manager Routes
   $router->group(['middleware' => 'manager'], function () use ($router) {
 
-  	$router->get('manager', function () {
-		    return "Hello manager.";
-		});
   	//// Get routes ///
 
   	// Return all active users
-  	$router->get('/users', 'UserController@getUsers');
+  	$router->get('/users', 					'UserController@getUsers');
 
   	// Return user with id
-  	$router->get('/users/{id}', 'UserController@getUser');
+  	$router->get('/users/{id}', 		'UserController@getUser');
 
-  	// Return all active teachers
-  	$router->get('/teachers', 'TeacherController@getTeachers');
-
-  	// Return teacher with id
-  	$router->get('/teachers/{id}', 'TeacherController@getTeachers');
 
   	//// Put routes ////
 
   	// Activate a user
-	  $router->get('/activate/{id}', 'UserController@activate');
+	  $router->put('/activate/users/{id}', 		'UserController@activate');
 
 	  // Deactivate a user
-	  $router->get('/deactivate/{id}', 'UserController@deactivate');
+	  $router->put('/deactivate/users/{id}', 	'UserController@deactivate');
+
+	  //// Post Routes ////
+
+	  // Add user as a teacher
+	  $router->post('/add/teachers/{id}', 		'TeacherController@add');
+
+	  //// Delete Routes ////
+
+	  // Remove user as a teacher
+	  $router->delete('/remove/teachers/{id}', 	'TeacherController@remove');
 	});
 
   // Teacher routes
@@ -57,9 +59,22 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	//// Get routes ////
   	
   	// Get all students associate with teacher request
-  	$router->get('/students', 'StudentController@getStudents');
+  	$router->get('/students', 			'StudentController@getStudents');
 
   	// Put routes
-	  $router->get('/students/{id}', 'StudentController@updateStudent');
+	  $router->get('/students/{id}', 	'StudentController@updateStudent');
 	});
+
+	
+	// Return all active teachers
+	$router->get('/teachers', 			'TeacherController@getTeachers');
+
+	// Return teacher with id
+	$router->get('/teachers/{id}', 	'TeacherController@getTeacher');
+
+  // Update a user
+  $router->put('/update/users/{id}', 	'UserController@updateUser');
+
+  // upload an image associate with a user
+  $router->post('/upload/users/image', 	'ImageController@userUpload');
 });

@@ -10,7 +10,7 @@
         "vlucas/phpdotenv": "~2.2",
         "predis/predis": "^1.1",
         "illuminate/redis": "^5.4",
-        "cvogit/lumen-jwt": "~1.0"
+        "cvogit/lumen-jwt": "^1.0.3"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
