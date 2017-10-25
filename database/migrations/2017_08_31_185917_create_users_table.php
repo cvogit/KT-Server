@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
 			$table->string('email', 64)->unique();
 			$table->string('password', 64);
 			$table->string('phoneNum', 32);
-			$table->string('profilePic', 64);
+			$table->string('profilePicPath', 64)->references('path')->on('images');
 			$table->boolean('active')->default(0);
 			$table->string('lastLogin');
 			$table->timestampsTz();

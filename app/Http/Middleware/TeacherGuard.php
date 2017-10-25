@@ -44,7 +44,7 @@ class TeacherGuard
 		if($user == null)
 			return response()->json(['message' => "Invalid request, user is not a manager."], 404);
 
-		// If user is a manager, let the request pass
+		// If user is a teacher, let the request pass
 		if( Teacher::where('userId', $user->id)->first() )
 				return $next($request);
 

@@ -16,9 +16,8 @@ class CreatePayrollsTable extends Migration
 		Schema::create('payrolls', function (Blueprint $table) {
 			$table->increments('id');
 			$table->integer('userId')->references('id')->on('users');
-			$table->tinyInteger('amount');
-			$table->text('nextPayment');
-			$table->text('lastPayment');
+			$table->integer('amount');
+			$table->text('payday');
 			$table->text('numPayments');
 			$table->timestamps();
 		});

@@ -7,7 +7,7 @@ use App\Teacher;
 use App\Helpers\JWTHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
+// use Illuminate\Support\Facades\Validator;
 use Cvogit\LumenJWT\JWT;
 
 
@@ -50,9 +50,12 @@ class TeacherController extends Controller
 		if( Teacher::where('userId', $user->id)->first() )
 			return response()->json(['message' => 'The user is already a teacher.'], 404);
 
-		Teacher::create([
+		$teacher = Teacher::create([
       'userId' => $user->id,
   	]);
+
+  	if (!$teacher)
+  		return response()->json(['message' => "Server error."], 500);
 
 		return response()->json([
 			'message' => 'The teacher have been added successfully.'
@@ -111,6 +114,7 @@ class TeacherController extends Controller
 
 		$result = [
 			'numStudents' => $teacher->numStudents, 
+			'numReports' => $teacher->numReports, 
 			'lastLogin' => $user->lastConnectTime
 			];
 
@@ -137,11 +141,11 @@ class TeacherController extends Controller
 
 		foreach($users as $user)
 		{
-			$user->numStudents = Teacher::where('userId', $user->id)->first()->numStudents;
+			$user->teacherID = Teacher::where('userId', $user->id)->first()->id;
 		}
 
 		return response()->json([
-			'message' => "Succesfully fetch all users.",
+			'message' => "Succesfully fetch all teachers.",
 			'result' => $users     // Question Ask about this: consistency vs efficiency
 			], 200);
 	}

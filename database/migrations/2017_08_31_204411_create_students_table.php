@@ -18,7 +18,7 @@ class CreateStudentsTable extends Migration
 			$table->string('name', 64);
 			$table->tinyInteger('age');
 			$table->text('description');
-			$table->string('profilePic', 64);
+			$table->string('avatarPath', 64)->references('path')->on('images');
 			$table->integer('numSessions')->default(0);
 			$table->boolean('assigned')->default(1);
 			$table->boolean('active')->default(1);

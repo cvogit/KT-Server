@@ -112,12 +112,6 @@ class UserController extends Controller
 		$user = User::where('id', $id)
 							->get(['id', 'name', 'phoneNum', 'lastLogin'])->first();
 
-		// If user is a teacher, fetch teach id
-		// if ( $teacher = Teacher::where('userId', $user->id)->first() )
-		// 		$user->teacherId = $teacher->id;
-		// 	else
-		// 		$user->teacherId = "";
-
 		return response()->json([
 			'message' => "Succesfully fetch user.",
 			'result' => $user
@@ -139,7 +133,7 @@ class UserController extends Controller
 
 		return response()->json([
 			'message' => "Succesfully fetch all users.",
-			'result' => $users     // Question Ask about this: consistency vs efficiency
+			'result' 	=> $users     
 			], 200);
 	}
 
@@ -182,7 +176,27 @@ class UserController extends Controller
 	}
 	
 	/**
-	 * Update an active user
+	 * Update the user making the request
+	 *
+	 * @param \Illuminate\Http\Request
+	 *
+	 * @return mixed 
+	 */
+	public function update(Request $request)
+	{
+		$user = $this->jwt->getUser();
+		$data = $request->only('email', 'name', 'password', 'phoneNum');
+
+		$user->fill($data);
+		$user->save();
+
+		return response()->json([
+			'message' => "The user is updated."
+			], 200);
+	}
+
+	/**
+	 * Update a user, only for manager
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param string

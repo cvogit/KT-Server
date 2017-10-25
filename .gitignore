@@ -3,3 +3,6 @@
 Homestead.json
 Homestead.yaml
 .env
+/storage/app/images/sites/
+/storage/app/images/students/
+/storage/app/images/users/

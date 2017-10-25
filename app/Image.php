@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 
-class UserImage extends Model 
+class Image extends Model 
 {
 
 	/**
@@ -16,7 +16,7 @@ class UserImage extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'userId', 'imageId'
+		'path'
 	];
 
 	/**
@@ -27,4 +27,5 @@ class UserImage extends Model
 	protected $hidden = [
 
 	];
+
 }

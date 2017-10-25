@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Image;
+use App\Manager;
 use App\User;
 use App\UserImage;
-use App\Manager;
 use App\Teacher;
 use App\Helpers\JWTHelper;
 use Illuminate\Http\Request;
@@ -29,11 +30,10 @@ class ImageController extends Controller
 	 * Upload an image belong to user
 	 *
 	 * @param \Illuminate\Http\Request
-	 * @param string
 	 *
 	 * @return mixed 
 	 */
-	public function userUpload(Request $request)
+	public function addUserImg(Request $request)
 	{
 		if (!$request->getContent()) {
 			return response()->json([
@@ -47,25 +47,108 @@ class ImageController extends Controller
 				], 404);
 		}
 
-		// Allocate the image ownership to user
-		$user = $this->jwt->getUser();
-
-		// Save image in storage
+		// Store the image in storage
 		$image = $request->getContent();
+		$fileName   = time() . '_' . mt_rand() . '.' . $request->input('extension');
+		$imagePath = '/storage/app/images/users/'.$fileName;
+		file_put_contents(base_path().$imagePath, $image);
 
-		$fileName   = $user->id . '_' . time() . '.' . $request->input('extension');
+		// Save image path in Image datavase
+		$imageObj = Image::create([
+			'path'	=> $imagePath
+			]);
 
-		$imagePath = base_path().'/storage/app/images/users/'.$fileName;
-
-		file_put_contents($imagePath, $image);
+		// Find and allocate the image ownership to user making the upload
+		$user = $this->jwt->getUser();
 
 		UserImage::create([
 			'userId' 			=> $user->id,
-			'imagePath'		=> $fileName
+			'imageId'			=> $imageObj->id
 			]);
 
 		return response()->json([
 			'message' => "The image is uploaded."
+			], 200);
+	}
+
+	/**
+	 * Return an image belong to user
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer $id
+	 *
+	 * @return mixed 
+	 */
+	public function getUserImg(Request $request, $imgId)
+	{
+		// Validate request
+		if ( !is_numeric($imgId) || ($imgId < 1) )
+			return response()->json(['message' => "Invalid request."], 404);
+
+		// Validate user making request is owner
+		$user = $this->jwt->getUser();
+
+		// Validate request user owns the image
+		$userImg = UserImage::where('imageId', $imgId)
+												->where('userId', $user->id)->first();										
+		if (!$userImg)
+			return response()->json(['message' => "Invalid request."], 404);
+
+		// Fetch image information 
+		$img = Image::find($imgId);
+
+		if (!$img)
+			return response()->json(['message' => "The image is no long available."], 500);
+
+		$imgPath = base_path() . $img->path;
+
+		return response()->download($imgPath);
+	}
+
+	/**
+	 * Return images ids belong to user
+	 *
+	 * @param \Illuminate\Http\Request
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function getUserImgId(Request $request)
+	{
+		$user = $this->jwt->getUser();
+
+		$ids = UserImage::where('userId', $user->id)->get(['imageId']);
+
+		return response()->json([
+			'message' => "Successfully return all images ids belong to user.",
+			'result' => $ids
+			], 200);
+	}
+
+	/**
+	 * Remove an image belong to req user
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function removeUserImg(Request $request, $imgId)
+	{
+		// Validate request
+		if ( !is_numeric($imgId) || ($imgId < 1) )
+			return response()->json(['message' => "Invalid request."], 404);
+
+		// Check if image belong to user makign the delete
+		$user = $this->jwt->getUser();
+		$userImg = UserImage::where('userId', 	$user->id)
+												->where('imageId', 	$imgId)
+												->first();
+		if ( !$userImg )
+			return response()->json(['message' => "Invalid request."], 404);
+
+		return response()->json([
+			'message' => "Successfully return all images ids belong to user.",
+			'result' => $ids
 			], 200);
 	}
 }

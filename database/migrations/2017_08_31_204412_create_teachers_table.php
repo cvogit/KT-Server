@@ -17,6 +17,7 @@ class CreateTeachersTable extends Migration
 			$table->increments('id');
 			$table->integer('userId')->references('id')->on('users');
 			$table->tinyInteger('numStudents')->default(0);
+			$table->tinyInteger('numReports')->default(0);
 			$table->timestamps();
 		});
 	}
