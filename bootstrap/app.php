@@ -64,11 +64,17 @@ $app->middleware([
 ]);
 
 $app->routeMiddleware([
-    'auth' => App\Http\Middleware\Authenticate::class,
-    'manager' => App\Http\Middleware\ManagerGuard::class,
-    'teacher' => App\Http\Middleware\TeacherGuard::class,
+    'auth'      => App\Http\Middleware\Authenticate::class,
+    'manager'   => App\Http\Middleware\ManagerMiddleware::class,
+    'teacher'   => App\Http\Middleware\TeacherMiddleware::class,
+    'manager_teacher'   => App\Http\Middleware\ManagerTeacherMiddleware::class,
+    'teacherResource'   => App\Http\Middleware\TeacherResourceMiddleware::class,
+    'studentResource'   => App\Http\Middleware\StudentResourceMiddleware::class,
+    'userResource'      => App\Http\Middleware\UserResourceMiddleware::class,
+    'userPrivate'      => App\Http\Middleware\UserPrivateMiddleware::class,
 ]);
 
+// Packages middlware
 $app->routeMiddleware([
     'jwt' => Cvogit\LumenJWT\Http\Middleware\JwtGuard::class,
 ]);

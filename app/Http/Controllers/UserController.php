@@ -3,28 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use App\User_Image;
+use App\UserImage;
 use App\Manager;
 use App\Teacher;
 use App\UserHelpers;
-use App\Helpers\JWTHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-//use Illuminate\Support\Facades\Validator;
+
 
 class UserController extends Controller
 {
-	/**
-	 * The JWT helper
-	 *
-	 * @var App\Helpers\JWTHelper
-	 */
-	private $jwt;
-
-	public function __construct(JWTHelper $jwt, Request $request)
+	public function __construct(Request $request)
 	{
-		$this->jwt = $jwt;
-		$this->jwt->setRequest($request);
+
 	}
 
 	/**
@@ -32,15 +23,15 @@ class UserController extends Controller
 	 *
 	 * @param \Illuminate\Http\Request
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function activate(Request $request, $id)
+	public function activate(Request $request, $userId)
 	{
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
+		if ( !$this->req->isValidInt($userId) )
+			return response()->json(['message' => "Invalid id."], 404);
 		
 		// Find the user to be activated in db
-		$user = User::where('id', $id)->first();
+		$user = User::where('id', $userId)->first();
 
 		// Return error if can't find user with $id in db
 		if( !$user  )
@@ -64,15 +55,15 @@ class UserController extends Controller
 	 *
 	 * @param \Illuminate\Http\Request
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response 
 	 */
-	public function deactivate(Request $request, $id)
+	public function deactivate(Request $request, $userId)
 	{
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
+		if ( !$this->req->isValidInt($userId) )
+			return response()->json(['message' => "Invalid id."], 404);
 
 		// Find user to be deactivated from db
-		$user = User::where('id', $id)->first();
+		$user = User::where('id', $userId)->first();
 		
 		// Return error if can't find user with $id in db
 		if( !$user  )
@@ -80,7 +71,7 @@ class UserController extends Controller
 
 		// Check if user is active
 		if( !$user->active )
-			return response()->json(['message' => "The account is already not active."], 404);
+			return response()->json(['message' => "The account is already inactive."], 404);
 
 		// Deactivate user
 		$user->active = 0;
@@ -92,86 +83,92 @@ class UserController extends Controller
 	}
 
 	/**
-	 * Get an active user
+	 * Get an user
 	 *
 	 * @param \Illuminate\Http\Request
-	 * @param numeric
+	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function getUser(Request $request, $id)
+	public function get(Request $request, $userId)
 	{
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
+		if ( !$this->req->isValidInt($userId) )
+			return response()->json(['message' => "Invalid user id."], 404);
 
-		$user = User::find($id);
+		$user = User::where('id', $userId)->get(['id', 'name', 'phoneNum', 'lastLogin', 'avatarId', 'active']);
 
-		if( !$user || !$user->active )
-			return response()->json(['message' => "Invalid user."], 404);
-
-		$user = User::where('id', $id)
-							->get(['id', 'name', 'phoneNum', 'lastLogin'])->first();
+		if( !$user )
+			return response()->json(['message' => "Unable to find user."], 404);
 
 		return response()->json([
 			'message' => "Succesfully fetch user.",
-			'result' => $user
+			'result' 	=> $user
 			], 200);
 	}
 
 	/**
-	 * Get all active user
+	 * Get all users
 	 *
 	 * @param \Illuminate\Http\Request
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function getUsers(Request $request)
+	public function getList(Request $request)
 	{
-		// Get active users needed fields
-		$users = User::where('active', 1)
-							->get(['id', 'name', 'phoneNum', 'lastLogin']);
+		$this->validate($request, [
+			'status'    => 	'integer|max:1|min:1',
+			'offset'		=>	'integer',
+		]);
+
+		$status = 1;
+		$offset = 0;
+		$limit  = 20;
+
+		if ( $request->has('status') )
+			$status = $request->input('status');
+		if ( $request->has('offset') )
+			$offset = $request->input('offset');
+
+		// Get users needed fields
+		$users = User::where('active', $status)->skip($offset)->take($limit)->get(['id', 'name', 'phoneNum', 'lastLogin', 'avatarId']);
 
 		return response()->json([
-			'message' => "Succesfully fetch all users.",
-			'result' 	=> $users     
+			'message' => "Succesfully fetch all active users.",
+			'result' 	=> $users,
+			'offset'	=> $offset+$limit   
 			], 200);
 	}
 
 	/**
-	 * Upload an image belong to user
+	 * Set profile avatar
 	 *
 	 * @param \Illuminate\Http\Request
-	 * @param string
+	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function uploadImage(Request $request)
+	public function setAvatar(Request $request, $imgId)
 	{
-		if (!$request->hasFile('image')) {
-			return response()->json([
-				'message' => "Invalid request, inputs are incorrect."
-				], 404);
-		}
+		if ( !$this->req->isValidInt($imgId) )
+			return response()->json(['message' => "Invalid id."], 404);
 
-		// Save image in storage
-		$image = $request->file('image');
+		// Check if image exist
+		$image = Image::find($imgId);
+		if(!$image)
+			return response()->json(['message' => "Image does not exist."], 401);
 
-		$fileName   = $this->jwt->getUser()->name . '_' . time() . '.' . $image->getClientOriginalExtension();
-
-		$imagePath = base_path().'/storage/app/images/users/'.$fileName;
+		$user = $this->req->getUser();
 		
-		file_put_contents($imagePath, $image);
+		// Check if image belong to user
+		$access = UserImage::where('userId', $user->id)->where('imageId', $image->id)->first();
+		if(!$access)
+			return response()->json(['message' => "User does not own the image."], 401);
 
-		// Allocate the image ownership to user
-		$user = $jwt->getUser();
-
-		User_Image::create([
-			'userId' 			=> $user->id,
-			'imagePath'		=> $imagePath
-			]);
+		$user->avatarId = $image->id;
+		$user->save();
 
 		return response()->json([
-			'message' => "The image is uploaded."
+			'message' => "The user avatar is updated."
 			], 200);
 	}
 	
@@ -180,49 +177,20 @@ class UserController extends Controller
 	 *
 	 * @param \Illuminate\Http\Request
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
 	public function update(Request $request)
 	{
-		$user = $this->jwt->getUser();
-		$data = $request->only('email', 'name', 'password', 'phoneNum');
+		$this->validate($request, [
+			'email'    	=> 	'email|max:64',
+			'name'		 	=>	'string|max:64',
+			'password' 	=> 	'confirmed|min:6|max:16',
+			'phoneNum' 	=>	'string|min:10|max:10',
+			'avatarPath'=>	'string|max:64'
+		]);
 
-		$user->fill($data);
-		$user->save();
-
-		return response()->json([
-			'message' => "The user is updated."
-			], 200);
-	}
-
-	/**
-	 * Update a user, only for manager
-	 *
-	 * @param \Illuminate\Http\Request
-	 * @param string
-	 *
-	 * @return mixed 
-	 */
-	public function updateUser(Request $request, $id)
-	{
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
-
-		// Only a manager or the user themselves can update
-		$reqId = $this->jwt->getUser()->id;
-		
-		// Check if a manger is making the request
-		if( !Manager::where('userId', $reqId)->first() )
-		{
-			// Check if user is making the request on themselves
-			if( Teacher::where('userId', $reqId)->first()->userId != $id )
-				return response()->json(['message' => "Permission denied to update user."], 404);
-		}
-
-		$data = $request->only('email', 'name', 'password', 'phoneNum');
-	
-		$user = User::find($id);
-
+		$user = $this->req->getUser();
+		$data = $request->only('email', 'name', 'password', 'phoneNum', 'avatarPath');
 		$user->fill($data);
 		$user->save();
 

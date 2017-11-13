@@ -15,16 +15,16 @@ use Cvogit\LumenJWT\JWT;
 class ManagerController extends Controller
 {
 	/**
-	 * The JWT helper
+	 * The req helper
 	 *
-	 * @var App\Helpers\JWTHelper
+	 * @var App\Helpers\RequestHelper
 	 */
-	private $jwt;
+	private $req;
 
-	public function __construct(RequestHelper $jwt, Request $request)
+	public function __construct(RequestHelper $req, Request $request)
 	{
-		$this->jwt = $req;
-		$this->jwt->setRequest($request);
+		$this->req = $req;
+		$this->req->setRequest($request);
 	}
 
 }

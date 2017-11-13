@@ -16,7 +16,7 @@ class CreateStudentsTable extends Migration
 		Schema::create('students', function (Blueprint $table) {
 			$table->increments('id');
 			$table->string('name', 64);
-			$table->tinyInteger('age');
+			$table->date('DoB');
 			$table->text('description');
 			$table->string('avatarPath', 64)->references('path')->on('images');
 			$table->integer('numSessions')->default(0);

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Payment;
 use App\Payroll;
 use App\User;
-use App\Helpers\JWTHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -13,17 +12,8 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
-	/**
-	 * The JWT helper
-	 *
-	 * @var App\Helpers\JWTHelper
-	 */
-	private $jwt;
-
-	public function __construct(JWTHelper $jwt, Request $request)
+	public function __construct()
 	{
-		$this->jwt = $jwt;
-		$this->jwt->setRequest($request);
 	}
 
 	/**
@@ -32,21 +22,18 @@ class PaymentController extends Controller
 	 * @param \Illuminate\Http\Request
 	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response 
 	 */
-	public function add(Request $request, $id)
-	{
-		// Validate request
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
-		
+	public function create(Request $request)
+	{	
 		$this->validate($request, [
 			'amount' 	=> 'required|integer',
-			'date' 		=> 'date'
+			'date' 		=> 'required|date',
+			'userId'  => 'required|integer'
 			]);
 
-		// Find the user to be added to payroll
-		$userObj = User::where('id', $id)->first();
+		// Find the user to make payment to
+		$userObj = User::where('id', $request->userId)->first();
 
 		if (!$userObj)
 			return response()->json(['message' => "Invalid request."], 404);
@@ -60,7 +47,7 @@ class PaymentController extends Controller
 								 ->where('amount', $request->amount)
 								 ->where('date', 	 $request->date)
 								 ->first())
-			return response()->json(['message' => "A similar payment was already made, please contact administrator if another is needed."], 404);
+			return response()->json(['message' => "A similar payment was already made, please contact administrator if another is needed."], 500);
 
 		// Log the payment
 		$payment = Payment::create([
@@ -78,23 +65,56 @@ class PaymentController extends Controller
 	}
 
 	/**
-	 * Return a list of payments with offset and limit
+	 * Return a payment
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function get(Request $request)
+	public function get(Request $request, $paymentId)
 	{
-		// Validate request have parameters
-		$offset = $request->offset;
-		$limit 	= $request->limit;
+		// Validate request
+		if ( !$this->req->isValidInt($paymentId) )
+			return response()->json(['message' => "Invalid id."], 404);
 
-		if ( !( is_numeric($offset) && is_numeric($limit) ) )
-			return response()->json(['message' => "Invalid request."], 404);
+		$payment = Payment::find($paymentId);
+
+		if (!$payment)
+  		return response()->json(['message' => "Server error, could not get payment."], 500);
+
+		return response()->json([
+			'message' 	=> "Payments are fetched successfully.",
+			'result'		=> $payment,
+			'offset'		=> $offset+$limit
+			], 200);
+	}
+
+	/**
+	 * Return a list of payments with offset and limit, available to manager
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function getList(Request $request)
+	{
+		// Validate request
+		$this->validate($request, [
+			'offset' 		=> 'integer',
+			]);
+
+		$offset = 0;
+		$limit  = 20;
+
+		if ( $request->has('offset') )
+			$offset = $request->input('offset');
 
 		$payments = Payment::skip($offset)->take($limit)->get();
+
+		if (!$payments)
+  		return response()->json(['message' => "Server error, could not get payments."], 500);
 
 		return response()->json([
 			'message' 	=> "Payments are fetched successfully.",
@@ -104,27 +124,64 @@ class PaymentController extends Controller
 	}
 
 	/**
+	 * Return a payment belong to a user
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function getUserPayment(Request $request, $userId, $paymentId)
+	{
+		// Validate request
+		if ( !$this->req->isValidInt($userId) )
+			return response()->json(['message' => "Invalid user id."], 404);
+		if ( !$this->req->isValidInt($paymentId) )
+			return response()->json(['message' => "Invalid payment id."], 404);
+
+		$payment = Payment::find($paymentId);
+
+		if (!$payment)
+  		return response()->json(['message' => "Server error, could not get payment."], 500);
+
+		return response()->json([
+			'message' 	=> "Payments are fetched successfully.",
+			'result'		=> $payment
+			], 200);
+	}
+
+	/**
 	 * Return a list of payments belong to a user
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function getUser(Request $request, $id)
+	public function getUserPaymentsList(Request $request, $userId)
 	{
 		// Validate request
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
+		if ( !$this->req->isValidInt($userId) )
+			return response()->json(['message' => "Invalid user id."], 404);
+		if ( !$this->req->isValidInt($paymentId) )
+			return response()->json(['message' => "Invalid payment id."], 404);
 
 		// Validate request
-		$offset = $request->offset;
-		$limit 	= $request->limit;
+		$this->validate($request, [
+			'offset' 		=> 'integer',
+			]);
 
-		if ( !( is_numeric($offset) && is_numeric($limit) ) )
-			return response()->json(['message' => "Invalid request."], 404);
+		$offset = 0;
+		$limit  = 20;
 
-		$payments = Payment::where('userId', $id)->skip($offset)->take($limit)->get();
+		if ( $request->has('offset') )
+			$offset = $request->input('offset');
+
+		$payments = Payment::where('userId', $userId)->skip($offset)->take($limit)->get();
+
+		if (!$payments)
+  		return response()->json(['message' => "Server error, could not get payments."], 500);
 
 		return response()->json([
 			'message' 	=> "Payments are fetched successfully.",
@@ -132,4 +189,5 @@ class PaymentController extends Controller
 			'offset'		=> $offset+$limit
 			], 200);
 	}
+
 }

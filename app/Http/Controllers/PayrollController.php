@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Payroll;
 use App\User;
-use App\Helpers\JWTHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -13,54 +12,51 @@ use Illuminate\Support\Facades\Validator;
 class PayrollController extends Controller
 {
 	/**
-	 * The JWT helper
+	 * The req helper
 	 *
-	 * @var App\Helpers\JWTHelper
+	 * @var App\Helpers\RequestHelper
 	 */
-	private $jwt;
+	private $req;
 
-	public function __construct(JWTHelper $jwt, Request $request)
+	public function __construct(RequestHelper $req, Request $request)
 	{
-		$this->jwt = $jwt;
-		$this->jwt->setRequest($request);
+		$this->req = $req;
+		$this->req->setRequest($request);
 	}
 
 	/**
-	 * Add user to payroll
+	 * Create a payroll entry
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response 
 	 */
-	public function add(Request $request, $id)
+	public function create(Request $request)
 	{
-		// Validate request
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
-		
 		$this->validate($request, [
+			'userId' =>	'required|integer',
 			'amount' => 'required|integer',
 			'payday' => 'date'
 			]);
 
 		// Find the user to be added to payroll
-		$user = User::where('id', $id)->first();
+		$user = User::where('id', $request->userId)->first();
 
 		if (!$user)
-			return response()->json(['message' => "Invalid request."], 404);
+			return response()->json(['message' => "Unable to find user."], 404);
 
 		if (Payroll::where('userId', $user->id)->first())
 			return response()->json(['message' => "User is already on payroll."], 404);
 
 		$payroll = Payroll::create([
-      'userId' => $user->id,
+      'userId' => $request->userId,
       'amount' => $request->amount,
       'payday' => $request->payday
   	]);
 
   	if (!$payroll)
-  		return response()->json(['message' => "Server error."], 500);
+  		return response()->json(['message' => "Server error, could not add user to payroll."], 500);
 
 		return response()->json([
 			'message' => "The user have been added to payroll successfully."
@@ -71,13 +67,16 @@ class PayrollController extends Controller
 	 * Return list of payrolls
 	 *
 	 * @param \Illuminate\Http\Request
-	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response 
 	 */
-	public function get(Request $request)
+	public function getList(Request $request)
 	{
+	
 		$payrolls = Payroll::get();
+
+		if (!$payrolls)
+  		return response()->json(['message' => "Server error, could not get payroll."], 500);
 
 		return response()->json([
 			'message' => "Payrolls are fetched successfully.",
@@ -90,17 +89,21 @@ class PayrollController extends Controller
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
+	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response 
 	 */
-	public function remove(Request $request, $id)
+	public function remove(Request $request, $payrollId)
 	{
 		// Validate request
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => "Invalid request."], 404);
+		if ( !$this->req->isValidInt($payrollId) )
+			return response()->json(['message' => "Invalid payroll."], 404);
+		$this->validate($request, [
+			'userId' 		=> 'required|integer'
+			]);
 
 		// Find the payroll to be remove
-		$payroll = Payroll::where('userId', $id)->first();
+		$payroll = Payroll::where('id', $payrollId)->where('userId', $request->userId)->first();
 
 		if (!$payroll)
 			return response()->json(['message' => "User is not on payroll."], 404);
@@ -111,6 +114,4 @@ class PayrollController extends Controller
 			'message' => "The user have been remove from payroll successfully."
 			], 200);
 	}
-
-
 }

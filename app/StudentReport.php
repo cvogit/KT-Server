@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 
-class StudentImage extends Model 
+class StudentReport extends Model 
 {
 
 	/**
@@ -16,7 +16,7 @@ class StudentImage extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'studentId', 'imageId'
+		'teacherId', 'studentId', 'goals', 'results', 'score', 'notes', 'lastReport', 'nextReport', 'deadline', 'submitTime', 'weekOf'
 	];
 
 	/**

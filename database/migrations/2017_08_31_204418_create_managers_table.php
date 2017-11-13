@@ -15,7 +15,7 @@ class CreateManagersTable extends Migration
 	{
 		Schema::create('managers', function (Blueprint $table) {
 			$table->increments('id');
-			$table->integer('userId')->references('id')->on('users');
+			$table->integer('userId')->references('id')->on('users')->unique();
 			$table->timestamps();
 		});
 	}

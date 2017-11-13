@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use App\Helpers\UserHelpers;
+use App\Helpers\UserHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -57,7 +57,9 @@ class AuthController extends Controller
 			return response()->json(['message' => "Could not create JWT, cvogit/lumen-jwt errors."], 404);
     }
 
-    UserHelpers::updateUser($user);
+    date_default_timezone_set('America/Los_Angeles');
+		$user->lastLogin = date('m/d/Y h:i:s a');
+		$user->save();
     
 		return response()->json(['token' => $token], 200);
 	}

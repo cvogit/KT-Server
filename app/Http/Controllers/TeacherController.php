@@ -4,43 +4,33 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Teacher;
-use App\Helpers\JWTHelper;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-// use Illuminate\Support\Facades\Validator;
-use Cvogit\LumenJWT\JWT;
 
 
 class TeacherController extends Controller
 {
-	/**
-	 * The JWT helper
-	 *
-	 * @var App\Helpers\JWTHelper
-	 */
-	private $jwt;
-
-	public function __construct(JWTHelper $jwt, Request $request)
+	public function __construct()
 	{
-		$this->jwt = $jwt;
-		$this->jwt->setRequest($request);
+
 	}
 
 	/**
-	 * Create a new entry to the teacher table from an existing user id
+	 * Create a new teacher
 	 *
 	 * @param \Illuminate\Http\Request
-	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function add(Request $request, $id)
+	public function create(Request $request)
 	{
-		if ( !is_numeric($id) || ($id < 1) )
-			return response()->json(['message' => 'Invalid request.'], 404);
+		// Validate request
+		$this->validate($request, [
+			'userId' 		=> 'required|integer'
+			]);
 
 		// Find the user to be activated in db
-		$user = User::find($id);
+		$user = User::find($request->userId);
 
 		// Return error if can't find user with $id in db
 		if( !$user || !$user->active  )
@@ -63,90 +53,118 @@ class TeacherController extends Controller
 	}
 
 	/**
-	 * Remove an entry from the teacher table
+	 * Activate a teacher
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function remove(Request $request, $id)
+	public function activate(Request $request, $teacherId)
 	{
-		if ( !is_numeric($id) || ($id < 1) )
+		if ( !$this->req->isValidInt($teacherId) )
 			return response()->json(['message' => 'Invalid request.'], 404);
 
-		// Find teacher to be remove
-		$teacher = Teacher::find($id);
+		// Find teacher to be activate
+		$teacher = Teacher::find($teacherId);
 
 		// Return error if can't find user with $id in db
 		if( !$teacher )
 			return response()->json(['message' => 'Invalid request, the teacher does not exist.'], 404);
 
-		$teacher->delete();
+		if ( $teacher->active )
+			return response()->json(['message' => 'Invalid request, the teacher is already active.'], 404);
+
+		$teacher->active = 1;
+		$teacher->save();
 
 		return response()->json([
-			'message' => 'The teacher have been removed successfully.'
+			'message' => 'The teacher have been activated successfully.'
 			], 200);
 	}
 
 	/**
-	 * Return a teacher
+	 * Deactivate a teacher
 	 *
 	 * @param \Illuminate\Http\Request
+	 * @param integer
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function getTeacher(Request $request, $id)
+	public function deactivate(Request $request, $teacherId)
+	{
+		if ( !$this->req->isValidInt($teacherId) )
+			return response()->json(['message' => 'Invalid request.'], 404);
+
+		// Find teacher to be deactivate
+		$teacher = Teacher::find($teacherId);
+
+		// Return error if can't find user with $id in db
+		if( !$teacher )
+			return response()->json(['message' => 'Unable to find teacher.'], 404);
+
+		if ( !$teacher->active )
+			return response()->json(['message' => 'Invalid request, the teacher is already not active.'], 404);
+
+		$teacher->active = 0;
+		$teacher->save();
+
+		return response()->json([
+			'message' => 'The teacher have been deactivated successfully.'
+			], 200);
+	}
+
+	/**
+	 * Return a teacher detail
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function get(Request $request, $teacherId)
 	{	
 		// Validate $id
-		if ( !is_numeric($id) || ($id < 1) )
+		if ( !$this->req->isValidInt($teacherId) )
 			return response()->json(['message' => 'The request parameters are invalid.'], 404);
 
 		// Find teacher to be return
-		$teacher = Teacher::where('id', $id)->get(['numStudents'])->first();
+		$teacher = Teacher::find($teacherId);
 
-		// Return error if can't find user with $id in db
-		if( !$teacher )
-			return response()->json(['message' => 'Invalid request, the teacher does not exist.'], 404);
-
-		// Get the teacher user info
-		$user = User::where('id', $id)->get(['lastLogin'])->first();
-
-		$result = [
-			'numStudents' => $teacher->numStudents, 
-			'numReports' => $teacher->numReports, 
-			'lastLogin' => $user->lastConnectTime
-			];
+		if ( !$teacher )
+			return response()->json(['message' => 'Unable to find teacher.'], 404);
 
 		return response()->json([
 			'message' => "Succesfully fetch teacher.",
-			'result' => $result
+			'result' 	=> $teacher
 			], 200);
 	}
 
 	/**
-	 * Return all teachers informations
+	 * Return all teachers
 	 *
 	 * @param \Illuminate\Http\Request
 	 *
-	 * @return mixed 
+	 * @return \Illuminate\Http\Response
 	 */
-	public function getTeachers(Request $request)
+	public function getList(Request $request)
 	{	
-		// Get all teachers user id
-		$ids = Teacher::all()->pluck('userId');
+		// Validate request
+		$this->validate($request, [
+			'offset' 		=> 'integer',
+			]);
 
-		// Get the teacher user info
-		$users = User::find($ids, array('id', 'name', 'email', 'phoneNum', 'lastLogin'));
+		$offset = 0;
+		$limit  = 20;
 
-		foreach($users as $user)
-		{
-			$user->teacherID = Teacher::where('userId', $user->id)->first()->id;
-		}
+		if ( $request->has('offset') )
+			$offset = $request->input('offset');
+
+		$teachers = Payment::skip($offset)->take($limit)->get();
 
 		return response()->json([
 			'message' => "Succesfully fetch all teachers.",
-			'result' => $users     // Question Ask about this: consistency vs efficiency
+			'result' 	=> $teachers
 			], 200);
 	}
 }

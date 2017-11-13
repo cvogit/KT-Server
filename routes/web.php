@@ -17,85 +17,101 @@ $router->get('/', function () {
 
 $router->post('register', 'RegisterController@register');
 
-$router->get('login', 'AuthController@login');
+$router->get('login/{id}', 'AuthController@login');
+
 
 // JWT protecteed routes
 $router->group(['middleware' => 'jwt'], function () use ($router) {
 
-	// Manager Routes
+	// Access for managers
   $router->group(['middleware' => 'manager'], function () use ($router) {
 
-  	// Return all active users
-  	$router->get('/users', 										'UserController@getUsers');
+ 	  $router->get('/payments', 										'PaymentController@getList');
+	  $router->get('/payments/{paymentId}', 				'PaymentController@get');
+	  $router->post('/payments', 										'PaymentController@create');
 
-  	// Return user with id
-  	$router->get('/users/{id}', 							'UserController@getUser');
+	  $router->get('/payrolls', 										'PayrollController@getList');
+	  $router->post('/payrolls', 										'PayrollController@create');
+	  $router->delete('/payrolls/{payrollId}', 			'PayrollController@remove');
 
-  	// Activate a user
-	  $router->put('/activate/users/{id}', 			'UserController@activate');
+	  $router->put('reports/{reportId}/approve',		'ReportController@approve');
+	  $router->put('reports/{reportId}/unapprove',	'ReportController@unapprove');
 
-	  // Deactivate a user
-	  $router->put('/deactivate/users/{id}', 		'UserController@deactivate');
 
-	  // Return all payments
-	  $router->get('/payments', 								'PaymentController@get');
+	  $router->get('/students/active', 							'StudentController@getActiveStudentsList');
+	  $router->get('/students/inactive', 						'StudentController@getInactiveStudentsList');
+	  $router->put('/students/activate',						'StudentController@activate');
+	  $router->put('/students/deactivate', 					'StudentController@deactivate');
+	  $router->post('/students/assign', 						'StudentController@assign');
+	  $router->delete('/students/unassign', 				'StudentController@unassign');
 
-	  // Return all payments belong to a user
-	  $router->get('/payments/{id}', 						'PaymentController@getUser');
+	  /$router->post('/teachers', 											'TeacherController@create');
+	  $router->put('/teachers/{teacherId}/activate', 		'TeacherController@activate');
+	  $router->put('/teachers/{teacherId}/deactivate', 	'TeacherController@deactivate');
 
-	  // Log a payment to a user
-	  $router->post('/payments/{id}', 					'PaymentController@add');
-
-	  // Return all payrolls
-	  $router->get('/payrolls', 								'PayrollController@get');
-
-	  // Add user to payroll
-	  $router->post('/payrolls/{id}', 					'PayrollController@add');
-
-	  // Remove user from payroll
-	  $router->delete('/payrolls/{id}', 				'PayrollController@remove');
-
-	  // Add user as a teacher
-	  $router->post('/teachers/{id}', 					'TeacherController@add');
-
-	  // Remove user as a teacher
-	  $router->delete('/teachers/{id}', 				'TeacherController@remove');
+  	$router->get('/users', 												'UserController@getList');
+  	$router->put('/users/{userId}/activate', 			'UserController@activate');
+	  $router->put('/users/{userId}/deactivate',		'UserController@deactivate');
 	});
 
-  // Teacher routes
-  $router->group(['middleware' => 'teacher'], function () use ($router) {
-  	
-  	// Get all students associate with teacher request
-  	$router->get('/students', 											'StudentController@getStudents');
+  // Access for any teacher
+	$router->group(['middleware' => 'teacher'], function () use ($router) {
 
-  	// Put routes
-	  $router->get('/students/{id}', 									'StudentController@updateStudent');
-
-	  // Get an image associate with a student id
-  	$router->get('/images/students/{id}/{picId}', 	'ImageController@studentUpload');
-
-	  // upload an image associate with a student id
-  	$router->post('/images/upload/students/{id}', 	'ImageController@studentUpload');
 	});
 
-	// Return all active teachers
-	$router->get('/teachers', 										'TeacherController@getTeachers');
+	// Access for any teacher
+	$router->group(['middleware' => 'manager_teacher'], function () use ($router) {
 
-	// Return teacher with id
-	$router->get('/teachers/{id}', 								'TeacherController@getTeacher');
+	  $router->post('/students', 												'StudentController@create');
 
-	// Return all pictures ids belong to user making the request
-	$router->get('/images/users', 								'ImageController@getUserImgId');
+	});
 
-	// Return a picture belong to user
-	$router->get('/images/users/{imgId}', 				'ImageController@getUserImg');
+  // Access only for teacher own resources or manager
+  $router->group(['middleware' => 'teacherResource'], function () use ($router) {
 
-	// upload an image associate with a user
-  $router->post('/images/user', 								'ImageController@addUserImg');
+  	$router->get('/teachers/{teacherId}', 						'TeacherController@get');
 
-  // upload an image associate with a user
-  $router->delete('/images/user/{imgId}', 			'ImageController@removeUserImg');
+  	$router->get('/teachers/{teacherId}/students', 		'StudentController@getTeacherStudentsList');
 
-  // Update a user
-  $router->put('/update/users/self', 						'UserController@update');
+  	$router->get('/teachers/{teacherId}/reports',			'ReportController@getTeacherReportsList');
+  	$router->post('/teachers/{teacherId}/reports',		'ReportController@create');
+	});
+
+	// Access for teachers with assigned student or managers
+  $router->group(['middleware' => 'studentResource'], function () use ($router) {
+
+  	$router->get('/students/{studentId}/images', 							'ImageController@getStudentImagesList');
+  	$router->get('/students/{studentId}/images/{imageId}',		'ImageController@getStudentImage');
+  	$router->post('/students/{studentId}/images', 						'ImageController@createStudentImage');
+  	$router->delete('/students/{studentId}/images/{imageId}', 'ImageController@removeStudentImage');
+
+  	$router->get('/students/{studentId}', 					'StudentController@get');
+  	$router->put('/students/{studentId}', 					'StudentController@update');
+
+  	$router->get('/students/{studentId}/reports',		'ReportController@getStudentReportsList');
+	});
+
+  // Access for user or manager
+  $router->group(['middleware' => 'userResource'], function () use ($router) {
+
+  	$router->get('/users/{userId}', 											'UserController@get');
+
+		$router->get('/users/{userId}/images', 								'ImageController@getUserImagesList');
+		$router->get('/users/{userId}/images/{userImgId}', 		'ImageController@getUserImage');
+
+		$router->get('/users/{userId}/payments', 							'PaymentController@getUserPaymentsList');
+		$router->get('/users/{userId}/payments/{paymentId}',	'PaymentController@getUserPayment');
+
+	});
+
+  // Access for user own resources
+	$router->group(['middleware' => 'userPrivate'], function () use ($router) {
+
+		$router->post('/users/{userId}/images', 							'ImageController@createUserImage');
+		$router->delete('/users/{userId}/images/{userImgId}',	'ImageController@removeUserImage');
+
+		$router->put('/users/{userId}/update', 								'UserController@update');
+	});
+
+	$router->get('/teachers', 															'TeacherController@getList');
 });

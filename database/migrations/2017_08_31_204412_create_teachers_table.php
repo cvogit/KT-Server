@@ -15,9 +15,11 @@ class CreateTeachersTable extends Migration
 	{
 		Schema::create('teachers', function (Blueprint $table) {
 			$table->increments('id');
-			$table->integer('userId')->references('id')->on('users');
+			$table->integer('userId')->references('id')->on('users')->unique();
 			$table->tinyInteger('numStudents')->default(0);
-			$table->tinyInteger('numReports')->default(0);
+			$table->tinyInteger('newReports')->default(0);
+			$table->integer('totalReports')->default(0);
+			$table->boolean('active')->default(1);
 			$table->timestamps();
 		});
 	}

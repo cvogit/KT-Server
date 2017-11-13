@@ -3,25 +3,41 @@
 namespace App\Helpers;
 
 use App\User;
-use \Exception;
 use Cvogit\LumenJWT\JWT;
+use \Exception;
 use Illuminate\Http\Request;
 
-class JWTHelper
+
+class RequestHelper
 {
+
 	/**
-	 * The JWT factory
+	 * The claims
+	 *
+	 * @var json
+	 */
+	private $claims;
+
+	/**
+	 * The JWT
 	 *
 	 * @var \Cvogit\LumenJWT\JWT
 	 */
 	private $jwt;
 
 	/**
-	 * The claims
+	 * The request
 	 *
 	 * @var \Illuminate\Http\Request
 	 */
-	private $claims;
+	private $request;
+
+	/**
+	 * The user
+	 *
+	 * @var \App\User
+	 */
+	private $user;
 
 	public function __construct(JWT $jwt)
 	{
@@ -42,15 +58,17 @@ class JWTHelper
 	}
 
 	/**
-	 * Set object request to the current http request
+	 * Validate positive integer
 	 *
-	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return boolean
 	 */
-	public function setRequest(Request $request)
+	public function isValidInt($int)
 	{
-		$this->request = $request;
-		$this->extractClaims();
-		$this->updateLoginTime();
+		if ( !is_numeric($int) || ($int < 1) )
+			return false;
+		return true;
 	}
 
 
@@ -61,10 +79,30 @@ class JWTHelper
 	 */
 	public function getUser()
 	{
-		// Fetch user using id
-		$user = User::where('id', $this->claims['jti'])->first();
 
-		return $user;
+		return $this->user;
+	}
+
+	/**
+	 * Set object request to the current http request
+	 *
+	 * @param \Illuminate\Http\Request
+	 */
+	public function setRequest(Request $request)
+	{
+		$this->request = $request;
+		$this->extractClaims();
+		$this->setUser();
+		$this->updateLoginTime();
+	}
+
+	/**
+	 * Set user to the user making http request
+	 *
+	 */
+	public function setUser()
+	{
+		$this->user = User::where('id', $this->claims['jti'])->first();
 	}
 
 	/**
@@ -76,7 +114,7 @@ class JWTHelper
 		$user = $this->getUser();
 
 		date_default_timezone_set('America/Los_Angeles');
-		$user->lastLogin = date('m/d/Y h:i:s a');
+		$user->lastLogin 	= date('m/d/Y h:i:s a');
 		
 		$user->save();
 	}
