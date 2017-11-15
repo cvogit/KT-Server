@@ -17,7 +17,7 @@ $router->get('/', function () {
 
 $router->post('register', 'RegisterController@register');
 
-$router->get('login/{id}', 'AuthController@login');
+$router->get('login', 		'AuthController@login');
 
 
 // JWT protecteed routes
@@ -45,7 +45,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	  $router->post('/students/assign', 						'StudentController@assign');
 	  $router->delete('/students/unassign', 				'StudentController@unassign');
 
-	  /$router->post('/teachers', 											'TeacherController@create');
+	  $router->post('/teachers', 												'TeacherController@create');
 	  $router->put('/teachers/{teacherId}/activate', 		'TeacherController@activate');
 	  $router->put('/teachers/{teacherId}/deactivate', 	'TeacherController@deactivate');
 
@@ -108,9 +108,9 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	$router->group(['middleware' => 'userPrivate'], function () use ($router) {
 
 		$router->post('/users/{userId}/images', 							'ImageController@createUserImage');
-		$router->delete('/users/{userId}/images/{userImgId}',	'ImageController@removeUserImage');
+		$router->delete('/users/{userId}/images/{imageId}',		'ImageController@removeUserImage');
 
-		$router->put('/users/{userId}/update', 								'UserController@update');
+		$router->put('/users/{userId}', 											'UserController@update');
 	});
 
 	$router->get('/teachers', 															'TeacherController@getList');
