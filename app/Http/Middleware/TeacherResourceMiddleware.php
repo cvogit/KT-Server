@@ -10,10 +10,6 @@ use Illuminate\Http\Request;
 
 class TeacherResourceMiddleware extends Middleware
 {
-	public function __construct(RequestHelper $req, Request $request)
-	{
-	}
-
 	/**
 	 * Handle an incoming request.
 	 *
@@ -23,6 +19,8 @@ class TeacherResourceMiddleware extends Middleware
 	 */
 	public function handle(Request $request, Closure $next)
 	{
+		$request->attributes->add(['req' => $this->req]);
+		
 		//Fetch user from request
 		$user 			= $this->req->getUser();
 
@@ -32,13 +30,13 @@ class TeacherResourceMiddleware extends Middleware
 		// If user is a manager, let them pass
 		$manager = Manager::where('userId', $user->id)->first();
 		if( $manager )
-			return $next($this->req, $request);
+			return $next($request);
 		
 		// If user is making a request to their own teacher resources, let them pass
-		$teacherId = $request->teacherId;
+		$teacherId = $request->route()[2]['teacherId'];
 		$teacher = Teacher::where('userId', $user->id)->first();
 		if ( $teacher->id == $teacherId )
-				return $next($this->req, $request);
+			return $next($request);
 
 		// if user does not have permission, return error 404
 		return response()->json(['message' => "User does not have permission for access."], 404);

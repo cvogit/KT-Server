@@ -8,12 +8,8 @@ use Closure;
 use \Exception;
 use Illuminate\Http\Request;
 
-class TeacherGuard extends Middleware
+class TeacherMiddleware extends Middleware
 {
-	public function __construct()
-	{
-	}
-
 	/**
 	 * Handle an incoming request.
 	 *
@@ -23,6 +19,8 @@ class TeacherGuard extends Middleware
 	 */
 	public function handle(Request $request, Closure $next)
 	{
+		$request->attributes->add(['req' => $this->req]);
+		
 		//Fetch user from request
 		$user = $this->req->getUser();
 
@@ -31,7 +29,7 @@ class TeacherGuard extends Middleware
 
 		// If user is a teacher, let the request pass
 		if( Teacher::where('userId', $user->id)->first() )
-				return $next($this->req, $request);
+				return $next($request);
 
 		// if user is not a manager, return error 404
 		return response()->json(['message' => "User does not have permission for access."], 404);

@@ -3,16 +3,11 @@
 namespace App\Http\Middleware;
 
 use App\User;
-use App\Helpers\RequestHelper;
 use Closure;
 use Illuminate\Http\Request;
 
-class UserResourceMiddleware extends Middleware
+class UserPrivateMiddleware extends Middleware
 {
-	public function __construct(RequestHelper $req, Request $request)
-	{
-	}
-
 	/**
 	 * Handle an incoming request.
 	 *
@@ -22,16 +17,18 @@ class UserResourceMiddleware extends Middleware
 	 */
 	public function handle(Request $request, Closure $next)
 	{
+		$request->attributes->add(['req' => $this->req]);
+
 		//Fetch user from request
-		$user 			= $this->req->getUser();
+		$user 		= $this->req->getUser();
 
 		if(!$user->active)
-			return response()->json(['message' => "Invalid request, no valid user."], 404);
-		
+			return response()->json(['message' => "User does not have permission for access."], 404);
+
+		$userId 	= $request->route()[2]['userId'];
 		// If user is making a request to their own resources, let them pass
-		$userId 	= $request->userId;
 		if ( $user->id == $userId )
-				return $next($this->req, $request);
+			return $next($request);
 
 		// if user is not a manager, return error 404
 		return response()->json(['message' => "User does not have permission for access."], 404);
