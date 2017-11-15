@@ -38,7 +38,7 @@ class AuthController extends Controller
 			'email'    => 'required|email|max:255',
 			'password' => 'required',
 		]);
-
+		
 		// Find user from db
 		$user = User::where('email', $request->input('email'))->first();
 

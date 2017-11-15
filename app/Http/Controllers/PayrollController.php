@@ -12,19 +12,6 @@ use Illuminate\Support\Facades\Validator;
 class PayrollController extends Controller
 {
 	/**
-	 * The req helper
-	 *
-	 * @var App\Helpers\RequestHelper
-	 */
-	private $req;
-
-	public function __construct(RequestHelper $req, Request $request)
-	{
-		$this->req = $req;
-		$this->req->setRequest($request);
-	}
-
-	/**
 	 * Create a payroll entry
 	 *
 	 * @param \Illuminate\Http\Request
@@ -46,6 +33,7 @@ class PayrollController extends Controller
 		if (!$user)
 			return response()->json(['message' => "Unable to find user."], 404);
 
+		// Validate user is on payroll
 		if (Payroll::where('userId', $user->id)->first())
 			return response()->json(['message' => "User is already on payroll."], 404);
 

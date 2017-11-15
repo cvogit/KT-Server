@@ -13,11 +13,6 @@ use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-	public function __construct(Request $request)
-	{
-
-	}
-
 	/**
 	 * Setting user 'active' field to 1
 	 *
@@ -185,8 +180,7 @@ class UserController extends Controller
 			'email'    	=> 	'email|max:64',
 			'name'		 	=>	'string|max:64',
 			'password' 	=> 	'confirmed|min:6|max:16',
-			'phoneNum' 	=>	'string|min:10|max:10',
-			'avatarPath'=>	'string|max:64'
+			'phoneNum' 	=>	'string|min:10|max:10'
 		]);
 
 		$user = $this->req->getUser();

@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends Controller
 {
-	public function __construct()
-	{
-	}
-
 	/**
 	 * Log a payment to a user to database
 	 *
@@ -164,8 +160,6 @@ class PaymentController extends Controller
 		// Validate request
 		if ( !$this->req->isValidInt($userId) )
 			return response()->json(['message' => "Invalid user id."], 404);
-		if ( !$this->req->isValidInt($paymentId) )
-			return response()->json(['message' => "Invalid payment id."], 404);
 
 		// Validate request
 		$this->validate($request, [

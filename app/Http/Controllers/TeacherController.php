@@ -10,11 +10,6 @@ use Illuminate\Http\Response;
 
 class TeacherController extends Controller
 {
-	public function __construct()
-	{
-
-	}
-
 	/**
 	 * Create a new teacher
 	 *
@@ -160,11 +155,12 @@ class TeacherController extends Controller
 		if ( $request->has('offset') )
 			$offset = $request->input('offset');
 
-		$teachers = Payment::skip($offset)->take($limit)->get();
+		$teachers = Teacher::skip($offset)->take($limit)->get();
 
 		return response()->json([
 			'message' => "Succesfully fetch all teachers.",
-			'result' 	=> $teachers
+			'result' 	=> $teachers,
+			'offset'	=> $offset+$limit
 			], 200);
 	}
 }

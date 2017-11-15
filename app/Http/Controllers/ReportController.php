@@ -11,10 +11,6 @@ use Illuminate\Support\Facades\Validator;
 
 class ReportController extends Controller
 {
-	public function __construct()
-	{
-	}
-
 	/**
 	 * Approve a report
 	 *

@@ -12,10 +12,6 @@ use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
-	public function __construct()
-	{
-	}
-
 	/**
 	 * Activate a student
 	 *

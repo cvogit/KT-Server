@@ -15,10 +15,6 @@ use Illuminate\Http\Response;
 
 class ImageController extends Controller
 {
-	public function __construct()
-	{
-	}
-
 	/**
 	 * Upload an image belong to student
 	 *
@@ -74,7 +70,7 @@ class ImageController extends Controller
 	public function createUserImage(Request $request, $userId)
 	{
 		// Validate request
-		if ( !$this->req->isValidInt($imageId) )
+		if ( !$this->req->isValidInt($userId) )
 			return response()->json(['message' => "Invalid id."], 404);
 
 		if (!$request->getContent()) {
@@ -275,8 +271,8 @@ class ImageController extends Controller
 		// Delete image from storage
 		unlink($imagePath);
 
-		// Delete user relationship to image
-		$userImg->delete();
+		// Delete user access to image
+		$access->delete();
 
 		// Delete image entry from database
 		$image->delete();
