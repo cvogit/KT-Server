@@ -71,7 +71,7 @@ $app->routeMiddleware([
     'teacherResource'   => App\Http\Middleware\TeacherResourceMiddleware::class,
     'studentResource'   => App\Http\Middleware\StudentResourceMiddleware::class,
     'userResource'      => App\Http\Middleware\UserResourceMiddleware::class,
-    'userPrivate'      => App\Http\Middleware\UserPrivateMiddleware::class,
+    'userPrivate'       => App\Http\Middleware\UserPrivateMiddleware::class,
 ]);
 
 // Packages middlware
