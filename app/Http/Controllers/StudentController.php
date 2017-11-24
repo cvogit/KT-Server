@@ -98,23 +98,25 @@ class StudentController extends Controller
 	{
 		// Validate request
 		$this->validate($request, [
-			'name' 					=> 'required|string',
-			'DoB' 					=> 'required|date',
-			'description' 	=> 'required|string'
+			'firstName'			=>	'required|string|max:64',
+			'lastName'			=>	'required|string|max:64',
+			'DoB' 					=> 	'required|date',
+			'description' 	=> 	'required|string'
 			]);
+
+		// Check if student is already created
+		if( Student::where('firstName', $request->firstName)->where('lastName', $request->lastName)->where('DoB', $request->DoB)->first())
+			return response()->json(['message' => "Student  is already registered."], 403);
 
 		$user = $this->req->getUser();
 
 		// Get user teacher info
 		$teacher = Teacher::where('userId', $user->id)->first();
 
-		// Check if student is already created
-		if( Student::where('name', $request->name)->where('DoB', $request->DoB)->first())
-			return response()->json(['message' => "Student  is already registered."], 403);
-
 		// Create student entry
 		$student = Student::create([
-			'name' 					=> $request->name,
+			'firstName' 		=> $request->firstName,
+			'lastName' 			=> $request->lastName,
 			'DoB' 					=> $request->DoB,
 			'description' 	=> $request->description
 			]);

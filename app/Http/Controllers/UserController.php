@@ -90,7 +90,7 @@ class UserController extends Controller
 		if ( !$this->req->isValidInt($userId) )
 			return response()->json(['message' => "Invalid user id."], 404);
 
-		$user = User::where('id', $userId)->get(['id', 'name', 'phoneNum', 'lastLogin', 'avatarId', 'active']);
+		$user = User::where('id', $userId)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'active']);
 
 		if( !$user )
 			return response()->json(['message' => "Unable to find user."], 404);
@@ -125,7 +125,7 @@ class UserController extends Controller
 			$offset = $request->input('offset');
 
 		// Get users needed fields
-		$users = User::where('active', $status)->skip($offset)->take($limit)->get(['id', 'name', 'phoneNum', 'lastLogin', 'avatarId']);
+		$users = User::where('active', $status)->skip($offset)->take($limit)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId']);
 
 		return response()->json([
 			'message' => "Succesfully fetch all active users.",
@@ -177,15 +177,26 @@ class UserController extends Controller
 	public function update(Request $request)
 	{
 		$this->validate($request, [
-			'email'    	=> 	'email|max:64',
-			'name'		 	=>	'string|max:64',
-			'password' 	=> 	'confirmed|min:6|max:16',
-			'phoneNum' 	=>	'string|min:10|max:10'
+			'email'    			=> 	'email|max:64',
+			'firstName'			=>	'string|max:64',
+			'lastName'			=>	'string|max:64',
+			'oldPassword' 	=> 	'min:6|max:16',
+			'newPassword' 	=> 	'confirmed|min:6|max:16',
+			'phoneNum' 			=>	'string|min:10|max:10'
 		]);
 
 		$user = $this->req->getUser();
-		$data = $request->only('email', 'name', 'password', 'phoneNum', 'avatarPath');
+		if (!Hash::check($request->input('oldPassword'), $user->password))
+			return response()->json(['message' => "The user is updated."], 404);
+
+		$data = $request->only('email', 'firstName', 'lastName', 'phoneNum');
 		$user->fill($data);
+
+		if ( $request->has('newPassword') )
+		{
+			$user->password = $request->input('newPassword');
+		}
+
 		$user->save();
 
 		return response()->json([
