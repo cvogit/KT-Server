@@ -60,7 +60,7 @@ class AuthController extends Controller
     date_default_timezone_set('America/Los_Angeles');
 		$user->lastLogin = date('m/d/Y h:i:s a');
 		$user->save();
-    
-		return response()->json(['token' => $token], 200);
+
+		return response()->json(['token' => $token, 'message' => "Login Successful."], 200);
 	}
 }

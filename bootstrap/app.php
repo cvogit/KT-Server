@@ -70,6 +70,7 @@ $app->routeMiddleware([
     'manager_teacher'   => App\Http\Middleware\ManagerTeacherMiddleware::class,
     'teacherResource'   => App\Http\Middleware\TeacherResourceMiddleware::class,
     'studentResource'   => App\Http\Middleware\StudentResourceMiddleware::class,
+    'userActive'        => App\Http\Middleware\UserActiveMiddleware::class,
     'userResource'      => App\Http\Middleware\UserResourceMiddleware::class,
     'userPrivate'       => App\Http\Middleware\UserPrivateMiddleware::class,
 ]);

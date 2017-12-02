@@ -59,7 +59,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
 	});
 
-	// Access for any teacher
+	// Access for any teacher or manager
 	$router->group(['middleware' => 'manager_teacher'], function () use ($router) {
 
 	  $router->post('/students', 												'StudentController@create');
@@ -113,5 +113,8 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 		$router->put('/users/{userId}', 											'UserController@update');
 	});
 
-	$router->get('/teachers', 															'TeacherController@getList');
+	$router->group(['middleware' => 'userActive'], function () use ($router) {
+		$router->get('/users/self', 														'UserController@getSelf');
+		$router->get('/teachers', 															'TeacherController@getList');
+	});
 });

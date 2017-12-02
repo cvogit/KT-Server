@@ -135,6 +135,29 @@ class UserController extends Controller
 	}
 
 	/**
+	 * Get user own user data
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function getSelf(Request $request)
+	{
+		$user = $this->req->getUser();
+
+		$user = $user->only(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'active']);
+
+		if( !$user )
+			return response()->json(['message' => "Unable to find user."], 404);
+
+		return response()->json([
+			'message' => "Succesfully fetch user.",
+			'result' 	=> $user
+			], 200);
+	}
+
+	/**
 	 * Set profile avatar
 	 *
 	 * @param \Illuminate\Http\Request
