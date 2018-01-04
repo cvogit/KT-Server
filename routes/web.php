@@ -96,6 +96,8 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
   	$router->get('/users/{userId}', 											'UserController@get');
 
+  	$router->get('/users/{userId}/roles',									'UserController@getRoles');
+
 		$router->get('/users/{userId}/images', 								'ImageController@getUserImagesList');
 		$router->get('/users/{userId}/images/{userImgId}', 		'ImageController@getUserImage');
 
@@ -114,7 +116,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	});
 
 	$router->group(['middleware' => 'userActive'], function () use ($router) {
-		$router->get('/users/self', 														'UserController@getSelf');
-		$router->get('/teachers', 															'TeacherController@getList');
+
+		$router->get('/teachers', 				'TeacherController@getList');
 	});
 });

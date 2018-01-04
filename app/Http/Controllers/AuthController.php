@@ -33,12 +33,12 @@ class AuthController extends Controller
 	 */
 	public function login(Request $request)
 	{
-		// Validate request input
-		$this->validate($request, [
-			'email'    => 'required|email|max:255',
-			'password' => 'required',
-		]);
+		$validator = $this->loginValidator($request->all());
 		
+		if($validator->fails())
+			return response()->json([
+			'message' => (string) $validator->messages()
+			], 422);
 		// Find user from db
 		$user = User::where('email', $request->input('email'))->first();
 
@@ -53,14 +53,34 @@ class AuthController extends Controller
 		// Create and return JWT to user, signed with user id
 		try {
 			$token = $this->jwt->create($user->id);
-		}	catch(\Exception $e){
+		} catch(\Exception $e){
 			return response()->json(['message' => "Could not create JWT, cvogit/lumen-jwt errors."], 404);
-    }
+		}
 
-    date_default_timezone_set('America/Los_Angeles');
+		date_default_timezone_set('America/Los_Angeles');
 		$user->lastLogin = date('m/d/Y h:i:s a');
 		$user->save();
 
-		return response()->json(['token' => $token, 'message' => "Login Successful."], 200);
+		return response()->json([
+			'message' => "Login Successful.",
+			'result'  => [
+				'token' => $token,
+				'userId'=> $user->id,
+			]
+		], 200);
+	}
+
+	/**
+	 * Validate user inputs
+	 * @param array
+	 * @return boolean
+	 */
+	public function loginValidator(array $data)
+	{
+
+		return Validator::make($data, [
+			'email' 		=> 'required|email',
+			'password'  => 'required|string|min:6',
+		]);
 	}
 }
