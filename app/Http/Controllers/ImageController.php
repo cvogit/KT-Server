@@ -49,10 +49,15 @@ class ImageController extends Controller
 			]);
 
 		// Allocate the image ownership to the student
-		StudentImage::create([
+		$studentImage = StudentImage::create([
 			'studentId' 			=> $studentId,
 			'imageId'					=> $imageObj->id
 			]);
+
+		if (!$studentImage)
+			return response()->json([
+				'message' => "Server error."
+			], 500);
 
 		return response()->json([
 			'message' => "The image is uploaded."
