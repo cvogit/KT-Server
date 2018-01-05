@@ -156,7 +156,10 @@ class UserController extends Controller
 
 		return response()->json([
 			'message' => "Succesfully fetch user roles.",
-			'result' 	=> $roles,  
+			'result' 	=> [
+				'userId'=> $userId,
+				'roles' => $roles,
+				],  
 			], 200);
 	}
 
