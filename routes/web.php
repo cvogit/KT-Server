@@ -26,6 +26,9 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	// Access for managers
   $router->group(['middleware' => 'manager'], function () use ($router) {
 
+		$router->post('/announcements', 							'AnnouncementController@create');
+		$router->put('/announcements', 								'AnnouncementController@update');
+
  	  $router->get('/payments', 										'PaymentController@getList');
 	  $router->get('/payments/{paymentId}', 				'PaymentController@get');
 	  $router->post('/payments', 										'PaymentController@create');
@@ -91,7 +94,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->get('/students/{studentId}/reports',		'ReportController@getStudentReportsList');
 	});
 
-  // Access for user or manager
+  // Access for user of own resource or manager
   $router->group(['middleware' => 'userResource'], function () use ($router) {
 
   	$router->get('/users/{userId}', 											'UserController@get');
@@ -116,6 +119,8 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	});
 
 	$router->group(['middleware' => 'userActive'], function () use ($router) {
+		$router->get('/announcements', 									'AnnouncementController@getList');
+		$router->get('/announcements/{announcementId}',	'AnnouncementController@get');
 
 		$router->get('/teachers', 				'TeacherController@getList');
 	});
