@@ -138,18 +138,21 @@ class UserController extends Controller
 	 * Get a user roles
 	 *
 	 * @param \Illuminate\Http\Request
+	 * @param integer
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function getRoles(Request $request)
+	public function getRoles(Request $request, $userId)
 	{
-		$user = $this->req->getUser();
+		if ( !$this->req->isValidInt($userId) )
+			return response()->json(['message' => "Invalid id."], 404);
+
 		$roles = '';
 		// Get users needed fields
-		if( Manager::where('userId', $user->id)->first() )
-			$roles = $roles . 'manager ';
-		if( Teacher::where('userId', $user->id)->first() )
-			$roles = $roles . 'teacher ';
+		if( Manager::where('userId', $userId)->first() )
+			$roles = $roles . 'manager';
+		if( Teacher::where('userId', $userId)->first() )
+			$roles = $roles . ' teacher';
 
 		return response()->json([
 			'message' => "Succesfully fetch user roles.",

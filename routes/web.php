@@ -94,7 +94,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->get('/students/{studentId}/reports',		'ReportController@getStudentReportsList');
 	});
 
-  // Access for user or manager
+  // Access for user of own resource or manager
   $router->group(['middleware' => 'userResource'], function () use ($router) {
 
   	$router->get('/users/{userId}', 											'UserController@get');
