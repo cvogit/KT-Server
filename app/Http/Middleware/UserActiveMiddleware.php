@@ -25,7 +25,7 @@ class UserActiveMiddleware extends Middleware
 
 		if(!$user->active)
 			return response()->json(['message' => "Invalid request, no valid user."], 404);
-		
+
 		return $next($request);
 	}
 }

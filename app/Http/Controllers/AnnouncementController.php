@@ -6,6 +6,8 @@ use App\User;
 use App\Announcement;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Validator;
+
 
 
 class AnnouncementController extends Controller
@@ -22,7 +24,7 @@ class AnnouncementController extends Controller
 		// Validate request
 		$validator = $this->announcementValidator($request->all());
 		
-		if($validator->fails())
+		if( $validator->fails() )
 			return response()->json([
 			'message' => (string) $validator->messages()
 			], 422);
@@ -34,7 +36,7 @@ class AnnouncementController extends Controller
 				'userId' 	=> $userId,
 				'title'  	=> $request->input('title'),
 				'content'	=> $request->input('content'),
-			])
+			]);
 
   	if (!$announcement)
   		return response()->json(['message' => "Server error."], 500);
@@ -85,7 +87,14 @@ class AnnouncementController extends Controller
 		if ( $request->has('offset') )
 			$offset = $request->input('offset');
 
-		$announcements = Announcement::where('active', 1)->skip($offset)->take($limit)->get();
+		$announcements = Announcement::where('active', 1)->skip($offset)->take($limit)->select('title', 'content', 'created_at', 'updated_at', 'userId')->get();
+
+		foreach($announcements as $announcement) {
+			$id = $announcement->userId;
+			$userName = User::find($id);
+			$announcement->firstName 	= $userName->firstName;
+			$announcement->lastName 	= $userName->lastName;
+		}
 
 		return response()->json([
 			'message' => "Succesfully fetch announcements.",
@@ -109,7 +118,7 @@ class AnnouncementController extends Controller
 			return response()->json(['message' => 'The request parameters are invalid.'], 404);
 
 		$validator = $this->announcementValidator($request->all());
-		if($validator->fails())
+		if ( $validator->fails() )
 			return response()->json([
 			'message' => (string) $validator->messages()
 			], 422);
@@ -120,7 +129,7 @@ class AnnouncementController extends Controller
 		if ( !$announcement )
 			return response()->json(['message' => 'Unable to find announcement.'], 404);
 
-		if($request->has('active'))
+		if( $request->has('active') )
 			$announcement->active 		= $request->input('active');
 		$announcement->title 		= $request->input('title');
 		$announcement->content 	= $request->input('content');
