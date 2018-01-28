@@ -96,10 +96,13 @@ class AnnouncementController extends Controller
 			$announcement->lastName 	= $userName->lastName;
 		}
 
+		$totalAnnouncement = Announcement::where('active', 1)->count();
+
 		return response()->json([
 			'message' => "Succesfully fetch announcements.",
 			'result' 	=> $announcements,
-			'offset'	=> $offset+$limit
+			'offset'	=> $offset+$limit,
+			'total'   => $totalAnnouncement,
 			], 200);
 	}
 
