@@ -82,18 +82,21 @@ class AnnouncementController extends Controller
 	public function getList(Request $request)
 	{	
 		$offset = 0;
-		$limit  = 5;
+		$limit  = 10;
+
+		$count = 0;
 
 		if ( $request->has('offset') )
 			$offset = $request->input('offset');
 
-		$announcements = Announcement::where('active', 1)->skip($offset)->take($limit)->select('title', 'content', 'created_at', 'updated_at', 'userId')->get();
+		$announcements = Announcement::where('active', 1)->orderBy('created_at', 'desc')->skip($offset)->take($limit)->select('title', 'content', 'created_at', 'updated_at', 'userId')->get();
 
 		foreach($announcements as $announcement) {
 			$id = $announcement->userId;
 			$userName = User::find($id);
 			$announcement->firstName 	= $userName->firstName;
 			$announcement->lastName 	= $userName->lastName;
+			$count++;
 		}
 
 		$totalAnnouncement = Announcement::where('active', 1)->count();
@@ -101,7 +104,7 @@ class AnnouncementController extends Controller
 		return response()->json([
 			'message' => "Succesfully fetch announcements.",
 			'result' 	=> $announcements,
-			'offset'	=> $offset+$limit,
+			'offset'	=> $offset+$count,
 			'total'   => $totalAnnouncement,
 			], 200);
 	}
