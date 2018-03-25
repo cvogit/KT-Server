@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\UserImage;
+use App\Image;
 use App\Manager;
 use App\Teacher;
 use App\UserHelpers;

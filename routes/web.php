@@ -116,6 +116,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 		$router->delete('/users/{userId}/images/{imageId}',		'ImageController@removeUserImage');
 
 		$router->put('/users/{userId}', 											'UserController@update');
+		$router->put('/users/{userId}/avatar/{imgId}', 				'UserController@setAvatar');
 	});
 
 	$router->group(['middleware' => 'userActive'], function () use ($router) {
