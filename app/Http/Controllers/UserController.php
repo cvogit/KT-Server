@@ -4,13 +4,13 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\UserImage;
+use App\UserHelpers;
 use App\Image;
 use App\Manager;
 use App\Teacher;
-use App\UserHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -79,7 +79,7 @@ class UserController extends Controller
 	}
 
 	/**
-	 * Get an user
+	 * Get an user info
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
@@ -92,6 +92,19 @@ class UserController extends Controller
 			return response()->json(['message' => "Invalid user id."], 404);
 
 		$user = User::where('id', $userId)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'active']);
+
+		$roles = '';
+
+		// Get users roles
+		if( Manager::where('userId', $userId)->first() )
+			$roles = $roles . 'manager';
+		if( Teacher::where('userId', $userId)->first() )
+			$roles = $roles . ' teacher';
+		$user[0]->roles = $roles;
+
+		// Get user images id
+		$imageIds = UserImage::where('userId', $userId)->get(['imageId']);
+		$user[0]->imageIds = $imageIds;
 
 		if( !$user )
 			return response()->json(['message' => "Unable to find user."], 404);
@@ -216,16 +229,21 @@ class UserController extends Controller
 		]);
 
 		$user = $this->req->getUser();
-		if (!Hash::check($request->input('oldPassword'), $user->password))
-			return response()->json(['message' => "The user is updated."], 404);
+
+		// Update password if old password matches
+		if ( $request->has('oldPassword') ) {
+			if (!Hash::check($request->input('oldPassword'), $user->password))
+				return response()->json(['message' => "Incorrect password."], 404);
+			else {
+				if ( $request->has('newPassword') )
+				{
+					$user->password = $request->input('newPassword');
+				}
+			}
+		}
 
 		$data = $request->only('email', 'firstName', 'lastName', 'phoneNum');
 		$user->fill($data);
-
-		if ( $request->has('newPassword') )
-		{
-			$user->password = $request->input('newPassword');
-		}
 
 		$user->save();
 

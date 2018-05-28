@@ -119,9 +119,14 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 		$router->put('/users/{userId}/avatar/{imgId}', 				'UserController@setAvatar');
 	});
 
+	// Routes for any active users
 	$router->group(['middleware' => 'userActive'], function () use ($router) {
+
 		$router->get('/announcements', 									'AnnouncementController@getList');
 		$router->get('/announcements/{announcementId}',	'AnnouncementController@get');
+
+		$router->get('/messages',								'MessageController@get');
+		$router->post('/messages',							'MessageController@create');
 
 		$router->get('/teachers', 				'TeacherController@getList');
 	});

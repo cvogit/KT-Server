@@ -37,7 +37,7 @@ class UserResourceMiddleware extends Middleware
 		if ( $user->id == $userId )
 				return $next($request);
 
-		// if user is not a manager, return error 404
+		// if user does not have permission, return error 404
 		return response()->json(['message' => "User does not have permission for access."], 404);
 	}
 }

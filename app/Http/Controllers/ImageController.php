@@ -133,11 +133,12 @@ class ImageController extends Controller
 			return response()->json(['message' => "Student dooes not own image."], 404);
 
 		$image = Image::find($studentImage->imageId);
+		if (!$image)
+			return response()->json(['message' => "The image is no long available."], 500);
 
-		return response()->json([
-			'message' => "Successfully return all images ids belong to student.",
-			'result' => $image
-			], 200);
+		$imgPath = base_path() . $image->path;
+		ob_end_clean();
+		return response()->download($imgPath);
 	}
 
 	/**
@@ -185,7 +186,7 @@ class ImageController extends Controller
 			return response()->json(['message' => "The image is no long available."], 500);
 
 		$imgPath = base_path() . $image->path;
-
+		ob_end_clean();
 		return response()->download($imgPath);
 	}
 
