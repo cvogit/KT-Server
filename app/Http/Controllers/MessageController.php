@@ -6,6 +6,7 @@ use App\Message;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -23,9 +24,9 @@ class MessageController extends Controller
 	{
 		// Validate request
 		$this->validate($request, [
-			'receiverId'	=> 	'required|string',
-			'title'		=>	'required|string',
-			'content'	=>	'string',
+			'receiverId'	=> 	'required|integer',
+			'title'				=>	'required|string',
+			'content'			=>	'string',
 			]);
 
 		$user = $this->req->getUser();
@@ -76,6 +77,15 @@ class MessageController extends Controller
 		$user = $this->req->getUser();
 
 		$messages = Message::where('receiverId', $user->id)->skip($offset)->take($limit)->get();
+
+		//$messages->join('User', 'User.name')->where('senderId', '=', 'User.id');
+
+		return DB::table('messages')
+                        ->join('users', 'messages.receiverId', '=', 'users.id')
+                        ->select('messages.*', 'users.firstName', 'users.lastName')
+                        ->skip($offset)
+                        ->take($limit)
+                        ->get();
 
 		if ( !$messages )
 			return response()->json([
