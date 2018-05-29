@@ -75,12 +75,8 @@ class MessageController extends Controller
 			$offset = $request->input('offset');
 
 		$user = $this->req->getUser();
-
-		$messages = Message::where('receiverId', $user->id)->skip($offset)->take($limit)->get();
-
-		//$messages->join('User', 'User.name')->where('senderId', '=', 'User.id');
-
-		return DB::table('messages')
+		
+		$messages = DB::table('messages')
 												->where('receiverId', $user->id)
                         ->join('users', 'messages.receiverId', '=', 'users.id')
                         ->select('messages.*', 'users.firstName', 'users.lastName')
