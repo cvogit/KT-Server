@@ -81,6 +81,7 @@ class MessageController extends Controller
 		//$messages->join('User', 'User.name')->where('senderId', '=', 'User.id');
 
 		return DB::table('messages')
+												->where('receiverId', $user->id)
                         ->join('users', 'messages.receiverId', '=', 'users.id')
                         ->select('messages.*', 'users.firstName', 'users.lastName')
                         ->skip($offset)
