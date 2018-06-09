@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Message;
+use App\Mail;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 
-class MessageController extends Controller
+class MailController extends Controller
 {
 	/**
-	 * Create a new message
+	 * Create a new mail
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
@@ -32,14 +32,14 @@ class MessageController extends Controller
 		$user = $this->req->getUser();
 
 		if ( !$user->active )
-			return response()->json(['message' => "No user or user is inactive."], 404);
+			return response()->json(['mail' => "No user or user is inactive."], 404);
 
 		$receiver = User::Where('id', $request->receiverId)->first();
 
 		if ( !$receiver->active )
-			return response()->json(['message' => "No receiving user or receiver is inactive."], 404);
+			return response()->json(['mail' => "No receiving user or receiver is inactive."], 404);
 
-		$messsage = Message::create([
+		$messsage = Mail::create([
 			'senderId'		=>	$user->id,
 			'receiverId'	=>	$request->receiverId,
 			'title'				=>	$request->title,
@@ -47,10 +47,10 @@ class MessageController extends Controller
 			]);
 
 		if ( !$messsage )
-			return response()->json(['message' => "Unable to create messsage."], 500);
+			return response()->json(['mail' => "Unable to create messsage."], 500);
 		
 		return response()->json([
-			'message' => 	"The message have been created successfully.",
+			'message' => 	"The mail have been created successfully.",
 			'result'	=>	$messsage
 			], 200);
 	}
@@ -76,23 +76,24 @@ class MessageController extends Controller
 
 		$user = $this->req->getUser();
 		
-		$messages = DB::table('messages')
-												->where('receiverId', $user->id)
-                        ->join('users', 'messages.receiverId', '=', 'users.id')
-                        ->select('messages.*', 'users.firstName', 'users.lastName')
-                        ->skip($offset)
-                        ->take($limit)
-                        ->get();
+		$mails = Mail::where('receiverId', $user->id)->orderBy('created_at', 'desc')->skip($offset)->take($limit)->select('title', 'content', 'created_at', 'senderId')->get();
 
-		if ( !$messages )
+		foreach($mails as $mail) {
+			$id = $mail->senderId;
+			$userName = User::find($id);
+			$mail->firstName 	= $userName->firstName;
+			$mail->lastName 	= $userName->lastName;
+		}
+
+		if ( !$mails )
 			return response()->json([
-			'message' => "Unable to get messages."
+			'mail' => "Unable to get mails."
 			], 500);
 
 		return response()->json([
-			'message' => "The messages have been fetched successfully.",
-			'results' => $messages,
-			'offset'	=> $offset+$limit 
+			'message' => "The mails have been fetched successfully.",
+			'result' => $mails,
+			'offset' => $offset+$limit 
 			], 200);
 	}
 
