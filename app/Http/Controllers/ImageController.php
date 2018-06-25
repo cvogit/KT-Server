@@ -109,7 +109,8 @@ class ImageController extends Controller
 			]);
 
 		return response()->json([
-			'message' => "The image is uploaded."
+			'message' => "The image is uploaded.",
+			'result'	=> $imageObj->id,
 			], 200);
 	}
 
@@ -285,6 +286,7 @@ class ImageController extends Controller
 
 		return response()->json([
 			'message' => "Successfully Successfully delete image.",
+			'result'	=> $imageId,
 			], 200);
 	}
 }
