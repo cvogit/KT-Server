@@ -245,7 +245,7 @@ class ImageController extends Controller
 		$image->delete();
 
 		return response()->json([
-			'message' => "Successfully Successfully delete image.",
+			'message' => "Successfully delete image.",
 			], 200);
 	}
 
@@ -285,7 +285,7 @@ class ImageController extends Controller
 		$image->delete();
 
 		return response()->json([
-			'message' => "Successfully Successfully delete image.",
+			'message' => "Successfully delete image.",
 			'result'	=> $imageId,
 			], 200);
 	}

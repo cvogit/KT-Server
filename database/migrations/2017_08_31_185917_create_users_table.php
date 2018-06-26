@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
 			$table->string('email', 64)->unique();
 			$table->string('password', 64);
 			$table->string('phoneNum', 16);
-			$table->integer('avatarId')->references('id')->on('images');
+			$table->integer('avatarId')->references('id')->on('images')->default(0);
 			$table->boolean('active')->default(0);
 			$table->string('lastLogin');
 			$table->timestampsTz();
