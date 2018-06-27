@@ -84,13 +84,25 @@ class ImageController extends Controller
 				], 404);
 		}
 
-		if ($request->input('extension'))
+		// Get the image file from base64 or direct image file upload
+		$image;
+		if($request->has('imageBase64')) {
+			$image = $request->imageBase64;
+			$base64Header = 'data:'.$request->base64Header.';base64,';
+			$image = str_replace($base64Header, '', $image);
+			$image = base64_decode(str_replace(' ', '+', $image));
+		}
+		else {
+			$image = $request->getContent();
+		}
+
+		if ($request->input('extension')) {
 			$extension = $request->input('extension');
+		}
 		else
 			$extension = 'jpeg';
 
 		// Store the image in storage
-		$image = $request->getContent();
 		$fileName   = time() . '_' . mt_rand() . '.' . $extension;
 		$imagePath = '/storage/app/images/users/'.$fileName;
 		file_put_contents(base_path().$imagePath, $image);
@@ -283,6 +295,12 @@ class ImageController extends Controller
 
 		// Delete image entry from database
 		$image->delete();
+
+		// If user avatarId is the same as the image being deleted, set avatar to 0
+		if( $user->avatarId == $imageId) {
+			$user->avatarId = 0;
+			$user->save();
+		}
 
 		return response()->json([
 			'message' => "Successfully delete image.",
