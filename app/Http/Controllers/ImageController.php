@@ -88,8 +88,7 @@ class ImageController extends Controller
 		$image;
 		if($request->has('imageBase64')) {
 			$image = $request->imageBase64;
-			$base64Header = 'data:'.$request->base64Header.';base64,';
-			$image = str_replace($base64Header, '', $image);
+			$image = preg_replace('/^data:image\/[a-z]+;base64,/', '', $image);
 			$image = base64_decode(str_replace(' ', '+', $image));
 		}
 		else {
