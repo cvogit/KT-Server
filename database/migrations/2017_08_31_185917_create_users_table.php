@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
 			$table->string('phoneNum', 16);
 			$table->integer('avatarId')->references('id')->on('images')->default(0);
 			$table->boolean('active')->default(0);
+			$table->boolean('new')->default(1);
 			$table->string('lastLogin');
 			$table->timestampsTz();
 		});

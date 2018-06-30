@@ -14,7 +14,7 @@ class Manager extends Model
      *
      * @var array
      */
-    protected $fillable = [
+    public $fillable = [
         'id', 'userId'
     ];
 

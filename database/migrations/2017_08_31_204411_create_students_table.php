@@ -17,9 +17,9 @@ class CreateStudentsTable extends Migration
 			$table->increments('id');
 			$table->string('firstName', 64);
 			$table->string('lastName', 64);
-			$table->date('DoB');
+			$table->string('DoB');
 			$table->text('description');
-			$table->string('avatarPath', 64)->references('path')->on('images');
+			$table->integer('avatarId')->references('id')->on('images')->default(0);
 			$table->integer('numSessions')->default(0);
 			$table->boolean('assigned')->default(1);
 			$table->boolean('active')->default(1);

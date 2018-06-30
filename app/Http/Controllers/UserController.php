@@ -73,6 +73,11 @@ class UserController extends Controller
 		$user->active = 0;
 		$user->save();
 
+		// If the user is a teacher, deactivate teacher access
+		$teacher = Teacher::where('userId', $userId)->first();
+		$teacher->active = 0;
+		$teacher->save();
+
 		return response()->json([
 			'message' => "The account has been deactivated successfully."
 			], 200);
@@ -126,25 +131,25 @@ class UserController extends Controller
 	{
 		$this->validate($request, [
 			'status'    => 	'integer|max:1|min:1',
-			'offset'		=>	'integer',
 		]);
 
 		$status = 1;
-		$offset = 0;
 		$limit  = 20;
 
 		if ( $request->has('status') )
 			$status = $request->input('status');
-		if ( $request->has('offset') )
-			$offset = $request->input('offset');
 
 		// Get users needed fields
-		$users = User::where('active', $status)->skip($offset)->take($limit)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId']);
+		$user;
+		if( $request->input('limit') == null ) {
+			$users = User::where('active', $status)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId']);
+		} else {
+			$users = User::where('active', $status)->take($limit)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId']);
+		}
 
 		return response()->json([
-			'message' => "Succesfully fetch all active users.",
+			'message' => "Succesfully fetch all requested users.",
 			'result' 	=> $users,
-			'offset'	=> $offset+$limit   
 			], 200);
 	}
 

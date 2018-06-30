@@ -55,6 +55,8 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->get('/users', 												'UserController@getList');
   	$router->put('/users/{userId}/activate', 			'UserController@activate');
 	  $router->put('/users/{userId}/deactivate',		'UserController@deactivate');
+
+  	$router->get('/managers/resources', 					'ManagerController@getManagerResource');
 	});
 
   // Access for any teacher
