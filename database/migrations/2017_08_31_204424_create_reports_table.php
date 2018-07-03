@@ -15,14 +15,11 @@ class CreateReportsTable extends Migration
 	{
 		Schema::create('reports', function (Blueprint $table)    {
 			$table->increments('id');
-			$table->integer('teacherId')->references('id')->on('teachers');
+			$table->integer('userId')->references('id')->on('users');
 			$table->integer('studentId')->references('id')->on('students');
-			$table->string('goals', 256);
-			$table->string('results', 256);
-			$table->text('notes');
-			$table->integer('score');
-			$table->boolean('approve')->default('0');
-			$table->boolean('update')->default('0');
+			$table->text('content', 256);
+			$table->integer('update')->default('0');
+			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});
 	}

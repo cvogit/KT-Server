@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Manager;
 use App\Report;
 use App\User;
 use Illuminate\Http\Request;
@@ -25,7 +26,8 @@ class ReportController extends Controller
 		if ( !$report )
 			return response()->json(['message' => "Unable to get report."], 500);
 
-		$report->approve = 1;
+		$report->new = false;
+		$report->save();
 
 		return response()->json([
 			'message' => "The report have been approved successfully.",
@@ -46,22 +48,22 @@ class ReportController extends Controller
 		// Validate request
 		$this->validate($request, [
 			'studentId' 		=> 	'required|integer',
-			'goal' 					=> 	'required|string',
-			'notes'					=>	'string'
+			'content'       =>  'required'
 			]);
 
 		$user = $this->req->getUser();
 
 		$assigned = TeacherStudent::where('teacherId', $teacherId)->where('studentId', $request->studentId)->first();
 
-		if ( !$assigned )
-			return response()->json(['message' => "Teacher does not have access to student."], 404);
+		$manager = Manager::Where('userId', $user->id)->first();
+
+		if ( !$assigned || !$manager )
+			return response()->json(['message' => "User does not have access to student."], 404);
 
 		$report = Report::create([
-			'teacherId'		=>	$teacherId,
-			'studentId'		=>	$request->studentId,
-			'goal'				=>	$request->goal,
-			'notes'				=>  $request->notes
+			'userId'		=>	$$user->id,
+			'studentId'	=>	$request->studentId,
+			'content' 	=>	$request->content,
 			]);
 
 		if ( !$report )

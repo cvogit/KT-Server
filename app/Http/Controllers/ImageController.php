@@ -186,11 +186,12 @@ class ImageController extends Controller
 		if ( !$this->req->isValidInt($imageId) )
 			return response()->json(['message' => "Invalid id."], 404);
 
-		// Validate user have access to the image
-		$user = $this->req->getUser();
-
-		$access = UserImage::where('imageId', $imageId)->where('userId', $user->id)->first();										
-		if ( !$access )
+		// Validate user have access to the image or a manager
+		$user 		= $this->req->getUser();
+		$manager 	= Manager::where('userId', $user->id)->first();
+		$access = UserImage::where('imageId', $imageId)->where('userId', $user->id)->first();
+											
+		if ( !$access && !$manager )
 			return response()->json(['message' => "User does not access to image."], 404);
 
 		$image = Image::find($imageId);
