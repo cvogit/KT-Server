@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Manager;
 use App\Report;
 use App\User;
+use App\Teacher;
+use App\TeacherStudent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -13,29 +15,6 @@ use Illuminate\Support\Facades\Validator;
 class ReportController extends Controller
 {
 	/**
-	 * Approve a report
-	 *
-	 * @param \Illuminate\Http\Request
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function approve(Request $request, $reportId)
-	{
-		$report = Report::find($reportId);
-
-		if ( !$report )
-			return response()->json(['message' => "Unable to get report."], 500);
-
-		$report->new = false;
-		$report->save();
-
-		return response()->json([
-			'message' => "The report have been approved successfully.",
-			'results' => $report
-			], 200);
-	}
-
-	/**
 	 * Create a new report
 	 *
 	 * @param \Illuminate\Http\Request
@@ -43,35 +22,74 @@ class ReportController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create(Request $request, $teacherId)
+	public function create(Request $request)
 	{
 		// Validate request
 		$this->validate($request, [
-			'studentId' 		=> 	'required|integer',
-			'content'       =>  'required'
+			'studentId' 	=> 	'required|integer',
+			'report'      =>  'required'
 			]);
 
 		$user = $this->req->getUser();
 
-		$assigned = TeacherStudent::where('teacherId', $teacherId)->where('studentId', $request->studentId)->first();
+		$teacher 	= Teacher::Where('userId', $user->id)->first();
+		
+		$assigned = null;
+		if($teacher)
+			$assigned = TeacherStudent::where('teacherId', $teacher->id)->where('studentId', $request->studentId)->first();
+
+		$manager = Manager::Where('userId', $user->id)->first();
+
+		if ( !$assigned && !$manager )
+			return response()->json(['message' => "User does not have access to student."], 404);
+
+		$report = Report::create([
+			'userId'		=>	$user->id,
+			'studentId'	=>	$request->studentId,
+			'content' 	=>	$request->report,
+			]);
+
+		if ( !$report )
+			return response()->json(['message' => "Unable to create report."], 500);
+		else {
+			$user->newReport++;
+			$user->save();
+		}
+
+		return response()->json([
+			'message' => 	"The report have been created successfully.",
+			'result'	=>	$report
+			], 200);
+	}
+
+	/**
+	 * Get a report
+	 *
+	 * @param \Illuminate\Http\Request
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function get(Request $request, $reportId)
+	{
+		$user = $this->req->getUser();
+
+		$assigned = Report::where('userId', $user->id)->first();
 
 		$manager = Manager::Where('userId', $user->id)->first();
 
 		if ( !$assigned || !$manager )
 			return response()->json(['message' => "User does not have access to student."], 404);
 
-		$report = Report::create([
-			'userId'		=>	$$user->id,
-			'studentId'	=>	$request->studentId,
-			'content' 	=>	$request->content,
-			]);
+		$report = Report::find($reportId);
 
 		if ( !$report )
-			return response()->json(['message' => "Unable to create report."], 500);
-		
+			return response()->json([
+			'message' => "Unable to get report."
+			], 500);
+
 		return response()->json([
-			'message' => 	"The report have been created successfully.",
-			'result'	=>	$report
+			'message' => "The report have been fetch successfully.",
+			'results' => $report
 			], 200);
 	}
 
@@ -179,29 +197,4 @@ class ReportController extends Controller
 			'message' => "The report have been updated successfully."
 			], 200);
 	}
-
-	/**
-	 * Unapprove a report
-	 *
-	 * @param \Illuminate\Http\Request
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function unapprove(Request $request, $reportId)
-	{
-		$report = Report::find($reportId);
-
-		if ( !$report )
-			return response()->json([
-			'message' => "Unable to get report."
-			], 500);
-
-		$report->approve = 0;
-
-		return response()->json([
-			'message' => "The report have been unapproved successfully.",
-			'results' => $reports
-			], 200);
-	}
-
 }

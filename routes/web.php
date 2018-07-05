@@ -37,10 +37,6 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	  $router->post('/payrolls', 										'PayrollController@create');
 	  $router->delete('/payrolls/{payrollId}', 			'PayrollController@remove');
 
-	  $router->put('reports/{reportId}/approve',		'ReportController@approve');
-	  $router->put('reports/{reportId}/unapprove',	'ReportController@unapprove');
-
-
 	  $router->get('/students/active', 							'StudentController@getActiveStudentsList');
 	  $router->get('/students/inactive', 						'StudentController@getInactiveStudentsList');
 	  $router->put('/students/activate',						'StudentController@activate');
@@ -79,7 +75,6 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->get('/teachers/{teacherId}/students', 		'StudentController@getTeacherStudentsList');
 
   	$router->get('/teachers/{teacherId}/reports',			'ReportController@getTeacherReportsList');
-  	$router->post('/teachers/{teacherId}/reports',		'ReportController@create');
 	});
 
 	// Access for teachers with assigned student or managers
@@ -108,7 +103,6 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
 		$router->get('/users/{userId}/payments', 							'PaymentController@getUserPaymentsList');
 		$router->get('/users/{userId}/payments/{paymentId}',	'PaymentController@getUserPayment');
-
 	});
 
   // Access for user own resources
@@ -131,5 +125,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 		$router->post('/messages',							'MessageController@create');
 
 		$router->get('/teachers', 				'TeacherController@getList');
+
+		$router->post('/reports',											'ReportController@create');
 	});
 });

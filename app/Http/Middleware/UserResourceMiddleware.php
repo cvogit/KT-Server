@@ -34,6 +34,7 @@ class UserResourceMiddleware extends Middleware
 		
 		// If user is making a request to their own resources, let them pass
 		$userId 	= $request->route()[2]['userId'];
+
 		if ( $user->id == $userId )
 				return $next($request);
 
