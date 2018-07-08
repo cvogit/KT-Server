@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Report;
+use App\Student;
+use App\Manager;
 use App\Teacher;
+use App\TeacherStudent;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -161,6 +165,52 @@ class TeacherController extends Controller
 			'message' => "Succesfully fetch all teachers.",
 			'result' 	=> $teachers,
 			'offset'	=> $offset+$limit
+			], 200);
+	}
+
+	/**
+	 * Return teacher initial resources
+	 *
+	 * @param \Illuminate\Http\Request
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function getTeacherResource(Request $request)
+	{
+
+		$user = $this->req->getUser();
+
+		$teacher = Teacher::where('id', $user->id)->get(['id', 'userId', 'numStudents', 'newReports']);
+		$teacher = $teacher[0];
+
+		if(!$teacher) {
+			return response()->json(['message' => 'Unable to find teacher.'], 404);
+		}
+
+		// Get list of managers resource
+		$managersId = Manager::get(['userId']);
+		$managers = [];
+		foreach ($managersId as $manager) {
+			array_push($managers, User::where('id', $manager->userId)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'newReport']));
+		}
+
+		$teacher->managers = $managers;
+
+		// Get all students' resources assigned to the teacher
+		$studentsId = TeacherStudent::Where('teacherId', $teacher->id)->get(['studentId']);
+		$idArray = [];
+		foreach ($studentsId as $json) {
+			array_push($idArray, $json->studentId);
+		}
+
+		$teacher->students = Student::where('active', 1)->whereIn('id', $idArray)->get(['id', 'firstName', 'lastName', 'DoB', 'description', 'avatarId']);
+
+		// Get all teacher reports
+		$teacher->reports = Report::Where('userId', $user->id)->get(['studentId', 'content']);
+
+		return response()->json([
+			'message' => "Succesfully teacher resources.",
+			'result' 	=> $teacher
 			], 200);
 	}
 }
