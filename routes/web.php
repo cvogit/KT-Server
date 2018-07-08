@@ -57,14 +57,12 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
   // Access for any teacher
 	$router->group(['middleware' => 'teacher'], function () use ($router) {
-
+  	$router->get('/teachers/resources', 					'TeacherController@getTeacherResource');
 	});
 
 	// Access for any teacher or manager
 	$router->group(['middleware' => 'manager_teacher'], function () use ($router) {
-
 	  $router->post('/students', 												'StudentController@create');
-
 	});
 
   // Access only for teacher own resources or manager
@@ -121,11 +119,15 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 		$router->get('/announcements', 									'AnnouncementController@getList');
 		$router->get('/announcements/{announcementId}',	'AnnouncementController@get');
 
+		$router->get('/teachers', 							'TeacherController@getList');
+
 		$router->get('/messages',								'MessageController@get');
+
+		$router->get('/users/{userId}/avatar',	'ImageController@getAvatar');
+
+
 		$router->post('/messages',							'MessageController@create');
 
-		$router->get('/teachers', 				'TeacherController@getList');
-
-		$router->post('/reports',											'ReportController@create');
+		$router->post('/reports',								'ReportController@create');
 	});
 });
