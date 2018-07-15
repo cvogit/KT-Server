@@ -126,6 +126,27 @@ class ImageController extends Controller
 	}
 
 	/**
+	 * Return an image that is an avatar of a user
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function getAvatar(Request $request, $userId)
+	{
+		$tUser = User::Where('id', $userId)->get(['avatarId']);
+
+		$image = Image::find($tUser[0]->avatarId);
+		if (!$image)
+			return response()->json(['message' => "The image is no long available."], 500);
+
+		$imgPath = base_path() . $image->path;
+		ob_end_clean();
+		return response()->download($imgPath);
+	}
+
+	/**
 	 * Return an image belong to student
 	 *
 	 * @param \Illuminate\Http\Request

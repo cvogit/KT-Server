@@ -24,7 +24,7 @@ class StudentResourceMiddleware extends Middleware
 		
 		//Fetch user from request
 		$user 			= $this->req->getUser();
-
+		
 		if(!$user->active)
 			return response()->json(['message' => "Invalid request, no valid user."], 404);
 

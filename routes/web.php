@@ -41,12 +41,13 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	  $router->get('/students/inactive', 						'StudentController@getInactiveStudentsList');
 	  $router->put('/students/activate',						'StudentController@activate');
 	  $router->put('/students/deactivate', 					'StudentController@deactivate');
-	  $router->post('/students/assign', 						'StudentController@assign');
-	  $router->delete('/students/unassign', 				'StudentController@unassign');
 
 	  $router->post('/teachers', 												'TeacherController@create');
 	  $router->put('/teachers/{teacherId}/activate', 		'TeacherController@activate');
 	  $router->put('/teachers/{teacherId}/deactivate', 	'TeacherController@deactivate');
+
+	  $router->post('/teachers/{teacherId}/assign/{studentId}', 		'TeacherController@assignStudent');
+	  $router->delete('/teachers/{teacherId}/unassign/{studentId}', 'TeacherController@unAssignStudent');
 
   	$router->get('/users', 												'UserController@getList');
   	$router->put('/users/{userId}/activate', 			'UserController@activate');

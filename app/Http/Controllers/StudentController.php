@@ -38,56 +38,6 @@ class StudentController extends Controller
 	}
 
 	/**
-	 * Assigns student to a teacher
-	 *
-	 * @param \Illuminate\Http\Request
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function assign(Request $request, $studentId)
-	{
-		// Validate request
-		$this->validate($request, [
-			'teacherId' 					=> 'required|integer',
-			'studentId' 					=> 'required|integer'
-			]);
-
-		$student = Student::where('id', $request->studentId)->first();
-
-		// Check if student is active
-		if (!$student->active)
-			return response()->json(['message' => "The student is not active."], 401);
-
-		$teacher = Teacher::where('id', $request->teacherId)->first();
-
-		if ( !$teacher )
-			return response()->json(['message' => "Unable to find teacher."], 403);
-
-		// Check if student is already assigned to teacher
-		$assigned = TeacherStudent::where('teacherId', $request->teacherId)->where('studentId', $request->studentId)->first();
-
-		if ( $assigned )
-			return response()->json(['message' => "Student already is assigned to teacher."], 403);
-
-		// Set student to teacher
-		$assigned = TeacherStudent::create([
-			'teacherId' => $request->teacherId,
-			'studentId' => $request->studentId
-			]);
-
-		if ( !$assigned )
-			return response()->json(['message' => "Unable to assign student to teacher."], 404);
-
-		$student->assigned = 1;
-		$student->save();
-
-		$teacher->numStudents++;
-		$teacher->save();
-
-		return response()->json(['message' => "Student have been assigned to teacher successfully."], 200);
-	}
-
-	/**
 	 * Create a new student and assign to teacher making the request
 	 *
 	 * @param \Illuminate\Http\Request
@@ -246,43 +196,6 @@ class StudentController extends Controller
 			'message' => "Student list have been fetched successfully.",
 			'result'  => $students
 			], 200);
-	}
-
-	/**
-	 * Unassigns student from a teacher
-	 *
-	 * @param \Illuminate\Http\Request
-	 *
-	 * @return \Illuminate\Http\Response 
-	 */
-	public function unassign(Request $request)
-	{
-		// Validate request
-		$this->validate($request, [
-			'teacherId' 					=> 'required|integer',
-			'studentId' 					=> 'required|integer'
-			]);
-
-		$teacher = Teacher::find($request->teacherId);
-
-		if ( !$teacher )
-			return response()->json(['message' => "Unable to find teacher."], 403);
-
-		// Check if student is assigned to teacher
-		$assigned = TeacherStudent::where('teacherId', $request->teacherId)->where('studentId', $request->studentId)->first();
-
-		if (!$assigned)
-			return response()->json(['message' => "Student already not assigned to teacher."], 403);
-		$assigned->delete();
-
-		$student = Student::find($request->studentId);
-		$student->assigned = 0;
-		$student->save();
-
-		$teacher->numStudents--;
-		$teacher->save();
-
-		return response()->json(['message' => "Student have been unassigned from teacher successfully."], 200);
 	}
 
 	/**

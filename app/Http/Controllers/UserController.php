@@ -41,6 +41,12 @@ class UserController extends Controller
 		$user->active = 1;
 		$user->save();
 
+		// if the user is new, set to false
+		if($user->new){
+			$user->new = 0;
+			$user->save();
+		}
+
 		return response()->json([
 			'message' => "The account have been activated successfully."
 			], 200);
