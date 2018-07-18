@@ -47,6 +47,12 @@ class UserController extends Controller
 			$user->save();
 		}
 
+		// if the user is not a teacher, set to be a teacher
+		$teacher = Teacher::where('userId', $user->id)->first();
+		if(!$teacher) {
+			$teacher = Teacher::create(['userId' => $user->id]);
+		}
+
 		return response()->json([
 			'message' => "The account have been activated successfully."
 			], 200);
