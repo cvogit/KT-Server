@@ -51,7 +51,7 @@ class StudentController extends Controller
 			'firstName'			=>	'required|string|max:64',
 			'lastName'			=>	'required|string|max:64',
 			'DoB' 					=> 	'required|date',
-			'description' 	=> 	'required|string'
+			'description' 	=> 	'string'
 			]);
 
 		// Check if student is already created
@@ -68,7 +68,6 @@ class StudentController extends Controller
 			'firstName' 		=> $request->firstName,
 			'lastName' 			=> $request->lastName,
 			'DoB' 					=> $request->DoB,
-			'description' 	=> $request->description
 			]);
 
 		$teacher->numStudents++;
