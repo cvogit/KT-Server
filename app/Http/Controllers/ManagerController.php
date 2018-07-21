@@ -71,6 +71,7 @@ class ManagerController extends Controller
 
 		// Get students resources
 		$students = Student::where('active', 1)->get(['id', 'firstName', 'lastName', 'DoB', 'description', 'avatarId']);
+		
 		// For each student, get their resources
 		foreach ($students as $student) {
 			// Query student image list

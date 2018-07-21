@@ -251,9 +251,18 @@ class TeacherController extends Controller
 
 		$teacher->students = Student::where('active', 1)->whereIn('id', $idArray)->get(['id', 'firstName', 'lastName', 'DoB', 'description', 'avatarId']);
 
-		// Query student image list
+		// Query students resource
 		foreach ($teacher->students as $student) {
+			// Query student image list
 			$student->images = StudentImage::Where('studentId', $student->id)->get(['imageId']);
+
+			// Query student report list
+			$student->reports = Report::Where('studentId', $student->id)->get(['id', 'userId', 'studentId', 'content', 'created_at']);
+
+			// For each report, get student name
+			foreach ($student->reports as $report) {
+				$report->student = Student::Where('id', $report->studentId)->get(['firstName', 'lastName'])->first();
+			}
 		}
 
 		// Get all teacher reports
