@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 
-class Report extends Model 
+class BirthForm extends Model 
 {
 
 	/**
@@ -16,7 +16,7 @@ class Report extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'userId', 'studentId', 'content_1', 'content_2','content_3','update', 'new'
+		'question_1', 'question_2', 'question_3', 'question_4'
 	];
 
 	/**

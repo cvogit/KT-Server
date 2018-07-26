@@ -33,7 +33,7 @@ class ManagerController extends Controller
 		$currentUser = $this->req->getUser();
 
 		// Get active user list, not including self
-		$users 		= User::where('active', 1)->where('id', '!=', $currentUser->id)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'newReport']);
+		$users 		= User::where('active', 1)->where('id', '!=', $currentUser->id)->get(['id', 'email', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'newReport']);
 		// For each user, if they are a teacher, include teacher resources
 		foreach ($users as $user) {
 			$teacher = Teacher::Where('userId', $user->id)->first();

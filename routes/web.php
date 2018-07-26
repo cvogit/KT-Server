@@ -43,8 +43,6 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 	  $router->put('/students/deactivate', 					'StudentController@deactivate');
 
 	  $router->post('/teachers', 												'TeacherController@create');
-	  $router->put('/teachers/{teacherId}/activate', 		'TeacherController@activate');
-	  $router->put('/teachers/{teacherId}/deactivate', 	'TeacherController@deactivate');
 
 	  $router->post('/teachers/{teacherId}/assign/{studentId}', 		'TeacherController@assignStudent');
 	  $router->delete('/teachers/{teacherId}/unassign/{studentId}', 'TeacherController@unAssignStudent');
@@ -52,6 +50,12 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->get('/users', 												'UserController@getList');
   	$router->put('/users/{userId}/activate', 			'UserController@activate');
 	  $router->put('/users/{userId}/deactivate',		'UserController@deactivate');
+
+  	$router->post('/users/roles/teacher', 				'UserController@getList');
+  	$router->delete('/users/roles/teacher', 			'UserController@getList');
+
+  	$router->post('/users/roles/consultant', 				'UserController@getList');
+  	$router->delete('/users/roles/consultant', 			'UserController@getList');
 
   	$router->get('/managers/resources', 					'ManagerController@getManagerResource');
 	});

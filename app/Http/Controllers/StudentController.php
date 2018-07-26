@@ -50,12 +50,12 @@ class StudentController extends Controller
 		$this->validate($request, [
 			'firstName'			=>	'required|string|max:64',
 			'lastName'			=>	'required|string|max:64',
-			'DoB' 					=> 	'required|date',
+			'birthday' 			=> 	'required|date',
 			'description' 	=> 	'string'
 			]);
 
 		// Check if student is already created
-		if( Student::where('firstName', $request->firstName)->where('lastName', $request->lastName)->where('DoB', $request->DoB)->first())
+		if( Student::where('firstName', $request->firstName)->where('lastName', $request->lastName)->where('birthday', $request->birthday)->first())
 			return response()->json(['message' => "Student  is already registered."], 403);
 
 		$user = $this->req->getUser();
@@ -67,7 +67,7 @@ class StudentController extends Controller
 		$student = Student::create([
 			'firstName' 		=> $request->firstName,
 			'lastName' 			=> $request->lastName,
-			'DoB' 					=> $request->DoB,
+			'birthday' 					=> $request->birthday,
 			]);
 
 		$teacher->numStudents++;

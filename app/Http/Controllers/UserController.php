@@ -47,12 +47,6 @@ class UserController extends Controller
 			$user->save();
 		}
 
-		// if the user is not a teacher, set to be a teacher
-		$teacher = Teacher::where('userId', $user->id)->first();
-		if(!$teacher) {
-			$teacher = Teacher::create(['userId' => $user->id]);
-		}
-
 		return response()->json([
 			'message' => "The account have been activated successfully."
 			], 200);
@@ -108,7 +102,7 @@ class UserController extends Controller
 		if ( !$this->req->isValidInt($userId) )
 			return response()->json(['message' => "Invalid user id."], 404);
 
-		$user = User::where('id', $userId)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'active']);
+		$user = User::where('id', $userId)->get(['id', 'email', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId', 'active']);
 
 		$roles = '';
 
@@ -242,7 +236,7 @@ class UserController extends Controller
 			'lastName'			=>	'string|max:64',
 			'oldPassword' 	=> 	'min:6|max:16',
 			'newPassword' 	=> 	'confirmed|min:6|max:16',
-			'phoneNum' 			=>	'string|min:10|max:10'
+			'phoneNum' 			=>	'string|max:10'
 		]);
 
 		$user = $this->req->getUser();

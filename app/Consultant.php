@@ -6,7 +6,7 @@ use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model 
+class Consultant extends Model 
 {
 
     /**
@@ -15,7 +15,7 @@ class Student extends Model
      * @var array
      */
     protected $fillable = [
-        'id', 'avatarId', 'basicFormId', 'familyFormId', 'pregnancyFormId', 'birthFormId', 'infancyFormId', 'toddlerFormId', 'educationFormId', 'presentFormId', 'active'
+        'id', 'userId'
     ];
 
     /**

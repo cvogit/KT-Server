@@ -17,7 +17,9 @@ class CreateReportsTable extends Migration
 			$table->increments('id');
 			$table->integer('userId')->references('id')->on('users');
 			$table->integer('studentId')->references('id')->on('students');
-			$table->text('content', 256);
+			$table->text('content_1');
+			$table->text('content_2');
+			$table->text('content_3');
 			$table->integer('update')->default('0');
 			$table->boolean('new')->default(true);
 			$table->timestamps();

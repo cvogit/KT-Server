@@ -15,13 +15,15 @@ class CreateStudentsTable extends Migration
 	{
 		Schema::create('students', function (Blueprint $table) {
 			$table->increments('id');
-			$table->string('firstName', 64);
-			$table->string('lastName', 64);
-			$table->string('DoB');
-			$table->text('description');
 			$table->integer('avatarId')->references('id')->on('images')->default(0);
-			$table->integer('numSessions')->default(0);
-			$table->boolean('assigned')->default(1);
+			$table->integer('basicFormId')->references('id')->on('basic_form')->default(0);
+			$table->integer('familyFormId')->references('id')->on('family_form')->default(0);
+			$table->integer('pregnancyFormId')->references('id')->on('pregnancy_form')->default(0);
+			$table->integer('birthFormId')->references('id')->on('birth_form')->default(0);
+			$table->integer('infancyFormId')->references('id')->on('infancy_form')->default(0);
+			$table->integer('toddlerFormId')->references('id')->on('toddler_form')->default(0);
+			$table->integer('educationFormId')->references('id')->on('education_form')->default(0);
+			$table->integer('presentFormId')->references('id')->on('innancy_form')->default(0);
 			$table->boolean('active')->default(1);
 			$table->timestamps();
 		});
