@@ -153,25 +153,40 @@ class ReportController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $reportId)
+	public function update(Request $request, $reportId, $contentNumber)
 	{
 		// Validate request
 		$this->validate($request, [
-			'goals' 		=> 	'string|max:256',
-			'results'		=>	'string|max:256',
-			'notes'			=>	'string',
+			'content' => 	'string|max:65535',
 			]);
 
+		$user = $this->req->getUser();
 		$report = Report::find($reportId);
 
-		if ( !$reports )
+		if ( !$report )
 			return response()->json([
-			'message' => "Unable to get report."
+			'message' => "Unable to find report."
 			], 500);
 
-		$data = $request->only('goals', 'results', 'notes');
-		$report->fill($data);
-		$report->update = 1;
+		if( $contentNumber == 2 ) {
+			$consultant = Consultant::where('userId',$user->id)->first();
+			$manager 		= Manager::where('userId',$user->id)->first();
+
+			if( !$manager && !$consultant ) {
+				return response()->json([
+					'message' => "Access denied."
+					], 400);
+			}
+		}
+
+		if( $contentNumber == 1 ) {
+			$report->content_1 = $request->input('content');
+		} else if( $contentNumber == 2 ) {
+			$report->content_2 = $request->input('content');
+		} else if( $contentNumber == 3 ) {
+			$report->content_3 = $request->input('content');
+		}
+
 		$report->save();
 
 		return response()->json([

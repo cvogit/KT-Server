@@ -93,6 +93,9 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->put('students/{studentId}/forms/education', 	'FormController@updateEducationForm');
   	$router->put('students/{studentId}/forms/present', 		'FormController@updatePresentForm');
 
+		$router->post('/reports',											'ReportController@create');
+		$router->put('/reports/{reportId}/contents/{contentNumber}',	'ReportController@update');
+
 	});
 
   // Access for user of own resource or manager
@@ -128,7 +131,5 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 		$router->get('/teachers', 							'TeacherController@getList');
 
 		$router->get('/users/{userId}/avatar',	'ImageController@getAvatar');
-
-		$router->post('/reports',								'ReportController@create');
 	});
 });
