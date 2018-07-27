@@ -39,23 +39,15 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
 	  $router->get('/students/active', 							'StudentController@getActiveStudentsList');
 	  $router->get('/students/inactive', 						'StudentController@getInactiveStudentsList');
-	  $router->put('/students/activate',						'StudentController@activate');
-	  $router->put('/students/deactivate', 					'StudentController@deactivate');
-
-	  $router->post('/teachers', 												'TeacherController@create');
-
-	  $router->post('/teachers/{teacherId}/assign/{studentId}', 		'TeacherController@assignStudent');
-	  $router->delete('/teachers/{teacherId}/unassign/{studentId}', 'TeacherController@unAssignStudent');
+	  $router->put('/students/{studentId}/activate',	'StudentController@activate');
+	  $router->put('/students/{studentId}/deactivate','StudentController@deactivate');
 
   	$router->get('/users', 												'UserController@getList');
   	$router->put('/users/{userId}/activate', 			'UserController@activate');
 	  $router->put('/users/{userId}/deactivate',		'UserController@deactivate');
 
-  	$router->post('/users/roles/teacher', 				'UserController@getList');
-  	$router->delete('/users/roles/teacher', 			'UserController@getList');
-
-  	$router->post('/users/roles/consultant', 				'UserController@getList');
-  	$router->delete('/users/roles/consultant', 			'UserController@getList');
+  	$router->post('/users/{userId}/roles/{role}', 	'UserController@setRole');
+  	$router->delete('/users/{userId}/roles/{role}', 'UserController@deleteRole');
 
   	$router->get('/managers/resources', 					'ManagerController@getManagerResource');
 	});
@@ -75,12 +67,10 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
   	$router->get('/teachers/{teacherId}', 						'TeacherController@get');
 
-  	$router->get('/teachers/{teacherId}/students', 		'StudentController@getTeacherStudentsList');
-
   	$router->get('/teachers/{teacherId}/reports',			'ReportController@getTeacherReportsList');
 	});
 
-	// Access for teachers with assigned student or managers
+	// Access for any roles with access to student resources
   $router->group(['middleware' => 'studentResource'], function () use ($router) {
 
   	$router->get('/students/{studentId}/images', 							'ImageController@getStudentImagesList');
@@ -92,6 +82,17 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->put('/students/{studentId}', 					'StudentController@update');
 
   	$router->get('/students/{studentId}/reports',		'ReportController@getStudentReportsList');
+
+  	$router->put('students/{studentId}/forms/basic', 			'FormController@updateBasicForm');
+  	$router->put('students/{studentId}/forms/pregnancy', 	'FormController@updatePregnancyForm');
+  	$router->put('students/{studentId}/forms/birth', 			'FormController@updateBirthForm');
+  	$router->put('students/{studentId}/forms/infancy', 		'FormController@updateInfancyForm');
+  	$router->put('students/{studentId}/forms/toddler', 		'FormController@updateToddlerForm');
+  	$router->put('students/{studentId}/forms/family', 		'FormController@updateFamilyForm');
+  	$router->put('students/{studentId}/forms/illness', 		'FormController@updateIllnessForm');
+  	$router->put('students/{studentId}/forms/education', 	'FormController@updateEducationForm');
+  	$router->put('students/{studentId}/forms/present', 		'FormController@updatePresentForm');
+
 	});
 
   // Access for user of own resource or manager
@@ -126,12 +127,7 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
 		$router->get('/teachers', 							'TeacherController@getList');
 
-		$router->get('/messages',								'MessageController@get');
-
 		$router->get('/users/{userId}/avatar',	'ImageController@getAvatar');
-
-
-		$router->post('/messages',							'MessageController@create');
 
 		$router->post('/reports',								'ReportController@create');
 	});

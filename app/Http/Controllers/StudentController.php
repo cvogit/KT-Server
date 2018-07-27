@@ -5,6 +5,15 @@ namespace App\Http\Controllers;
 use App\Student;
 use App\Teacher;
 use App\TeacherStudent;
+use App\BasicForm;
+use App\PregnancyForm;
+use App\BirthForm;
+use App\InfancyForm;
+use App\ToddlerForm;
+use App\FamilyForm;
+use App\IllnessForm;
+use App\EducationForm;
+use App\PresentForm;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -19,14 +28,9 @@ class StudentController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function activate(Request $request)
+	public function activate(Request $request, $studentId)
 	{
-		// Validate request
-		$this->validate($request, [
-			'studentId' 					=> 'required|integer'
-			]);
-
-		$student = Student::where('id', $request->studentId)->first();
+		$student = Student::where('id', $studentId)->first();
 
 		// Check if student is active
 		if ( $student->active )
@@ -38,7 +42,7 @@ class StudentController extends Controller
 	}
 
 	/**
-	 * Create a new student and assign to teacher making the request
+	 * Create a new student and forms
 	 *
 	 * @param \Illuminate\Http\Request
 	 *
@@ -48,35 +52,31 @@ class StudentController extends Controller
 	{
 		// Validate request
 		$this->validate($request, [
-			'firstName'			=>	'required|string|max:64',
-			'lastName'			=>	'required|string|max:64',
-			'birthday' 			=> 	'required|date',
-			'description' 	=> 	'string'
+			'name'					=>	'required|string|max:64'
 			]);
 
-		// Check if student is already created
-		if( Student::where('firstName', $request->firstName)->where('lastName', $request->lastName)->where('birthday', $request->birthday)->first())
-			return response()->json(['message' => "Student  is already registered."], 403);
-
-		$user = $this->req->getUser();
-
-		// Get user teacher info
-		$teacher = Teacher::where('userId', $user->id)->first();
+		$basicForm 			= BasicForm::create();
+		$familyForm 		= FamilyForm::create();
+		$pregnancyForm 	= PregnancyForm::create();
+		$birthForm 			= BirthForm::create();
+		$infancyForm 		= InfancyForm::create();
+		$toddlerForm 		= ToddlerForm::create();
+		$illnessForm 		= IllnessForm::create();
+		$educationForm 	= EducationForm::create();
+		$presentForm 		= PresentForm::create();
 
 		// Create student entry
 		$student = Student::create([
-			'firstName' 		=> $request->firstName,
-			'lastName' 			=> $request->lastName,
-			'birthday' 					=> $request->birthday,
-			]);
-
-		$teacher->numStudents++;
-		$teacher->save();
-
-		// Set student to teacher
-		TeacherStudent::create([
-			'teacherId' => $teacher->id,
-			'studentId' => $student->id
+			'name' 						=> $request->name,
+			'basicFormId' 		=> $basicForm->id,
+			'familyFormId' 		=> $familyForm->id,
+			'pregnancyFormId' => $pregnancyForm->id,
+			'birthFormId' 		=> $birthForm->id,
+			'infancyFormId' 	=> $infancyForm->id,
+			'toddlerFormId' 	=> $toddlerForm->id,
+			'illnessFormId' 	=> $illnessForm->id,
+			'educationFormId' => $educationForm->id,
+			'presentFormId' 	=> $presentForm->id,
 			]);
 
 		return response()->json(['message' => "Student have been created successfully."], 200);
@@ -89,14 +89,9 @@ class StudentController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function deactivate(Request $request)
+	public function deactivate(Request $request, $studentId)
 	{
-		// Validate request
-		$this->validate($request, [
-			'studentId' 					=> 'required|integer'
-			]);
-
-		$student = Student::where('id', $request->studentId)->first();
+		$student = Student::where('id', $studentId)->first();
 
 		// Check if student is active
 		if ( !$student->active )
@@ -168,29 +163,6 @@ class StudentController extends Controller
 		if ( !$students )
 			return response()->json(['message' => "Unable to get students."], 500);
 		
-		return response()->json([
-			'message' => "Student list have been fetched successfully.",
-			'result'  => $students
-			], 200);
-	}
-
-	/**
-	* Return a list of students belong to teaher
-	*
-	* @param \Illuminate\Http\Request
-	* @param integer
-	*
-	* @return \Illuminate\Http\Response
-	*/
-	public function getTeacherStudentsList(Request $request, $teacherId)
-	{
-		$teacher = Teacher::find($teacherId);
-
-		if ( !$teacher )
-			return response()->json(['message' => "Unable to get teacher."], 500);
-
-		$students = TeacherStudent::where('teacherId', $teacherId)->get();
-
 		return response()->json([
 			'message' => "Student list have been fetched successfully.",
 			'result'  => $students

@@ -26,35 +26,16 @@ class ReportController extends Controller
 	{
 		// Validate request
 		$this->validate($request, [
-			'studentId' 	=> 	'required|integer',
-			'report'      =>  'required'
+			'studentId' 	=> 	'required|integer'
 			]);
-
-		$user = $this->req->getUser();
-
-		$teacher 	= Teacher::Where('userId', $user->id)->first();
-		
-		$assigned = null;
-		if($teacher)
-			$assigned = TeacherStudent::where('teacherId', $teacher->id)->where('studentId', $request->studentId)->first();
-
-		$manager = Manager::Where('userId', $user->id)->first();
-
-		if ( !$assigned && !$manager )
-			return response()->json(['message' => "User does not have access to student."], 404);
 
 		$report = Report::create([
 			'userId'		=>	$user->id,
-			'studentId'	=>	$request->studentId,
-			'content' 	=>	$request->report,
+			'studentId'	=>	$request->studentId
 			]);
 
 		if ( !$report )
 			return response()->json(['message' => "Unable to create report."], 500);
-		else {
-			$user->newReport++;
-			$user->save();
-		}
 
 		return response()->json([
 			'message' => 	"The report have been created successfully.",

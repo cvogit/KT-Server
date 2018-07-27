@@ -23,7 +23,6 @@ class CreateUsersTable extends Migration
 			$table->integer('avatarId')->references('id')->on('images')->default(0);
 			$table->boolean('active')->default(0);
 			$table->boolean('new')->default(1);
-			$table->integer('newReport')->default(0);
 			$table->string('lastLogin');
 			$table->timestampsTz();
 		});

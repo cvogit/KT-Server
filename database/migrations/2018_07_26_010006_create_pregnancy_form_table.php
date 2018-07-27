@@ -13,23 +13,24 @@ class CreatePregnancyFormTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('pregnancy_form', function (Blueprint $table) {
+		Schema::create('pregnancy_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->text('question_1');
-			$table->text('question_2');
-			$table->boolean('question_3')->default(false);
-			$table->boolean('question_4')->default(false);
-			$table->boolean('question_5')->default(false);
-			$table->boolean('question_6')->default(false);
-			$table->boolean('question_7')->default(false);
-			$table->boolean('question_8')->default(false);
-			$table->boolean('question_9')->default(false);
-			$table->boolean('question_10')->default(false);
-			$table->boolean('question_11')->default(false);
-			$table->text('question_12');
-			$table->text('question_13');
-			$table->text('question_14');
-			$table->text('question_15');
+			$table->text('question_1')->nullable(true)->default(null);
+			$table->text('question_2')->nullable(true)->default(null);
+			$table->boolean('question_3')->nullable(true)->default(null);
+			$table->boolean('question_4')->nullable(true)->default(null);
+			$table->boolean('question_5')->nullable(true)->default(null);
+			$table->boolean('question_6')->nullable(true)->default(null);
+			$table->boolean('question_7')->nullable(true)->default(null);
+			$table->boolean('question_8')->nullable(true)->default(null);
+			$table->boolean('question_9')->nullable(true)->default(null);
+			$table->boolean('question_10')->nullable(true)->default(null);
+			$table->boolean('question_11')->nullable(true)->default(null);
+			$table->text('question_12')->nullable(true)->default(null);
+			$table->text('question_13')->nullable(true)->default(null);
+			$table->text('question_14')->nullable(true)->default(null);
+			$table->text('question_15')->nullable(true)->default(null);
+			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});
 	}
@@ -41,6 +42,6 @@ class CreatePregnancyFormTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('pregnancy_form');
+		Schema::dropIfExists('pregnancy_forms');
 	}
 }

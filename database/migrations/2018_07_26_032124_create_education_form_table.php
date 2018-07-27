@@ -13,17 +13,18 @@ class CreateEducationFormTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('education_form', function (Blueprint $table) {
+		Schema::create('education_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->text('question_1');
-			$table->boolean('question_2')->default(false);
-			$table->boolean('question_3')->default(false);
-			$table->boolean('question_4')->default(false);
-			$table->boolean('question_5')->default(false);
-			$table->text('question_6');
-			$table->text('question_7');
-			$table->text('question_8');
-			$table->text('question_9');
+			$table->text('question_1')->nullable(true)->default(null);
+			$table->boolean('question_2')->nullable(true)->default(null);
+			$table->boolean('question_3')->nullable(true)->default(null);
+			$table->boolean('question_4')->nullable(true)->default(null);
+			$table->boolean('question_5')->nullable(true)->default(null);
+			$table->text('question_6')->nullable(true)->default(null);
+			$table->text('question_7')->nullable(true)->default(null);
+			$table->text('question_8')->nullable(true)->default(null);
+			$table->text('question_9')->nullable(true)->default(null);
+			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});
 	}
@@ -35,6 +36,6 @@ class CreateEducationFormTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('education_form');
+		Schema::dropIfExists('education_forms');
 	}
 }

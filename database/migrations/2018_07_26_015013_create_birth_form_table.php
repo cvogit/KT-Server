@@ -13,12 +13,13 @@ class CreateBirthFormTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('birth_form', function (Blueprint $table) {
+		Schema::create('birth_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->string('question_1', 128);
-			$table->string('question_2', 128);
-			$table->string('question_3', 128);
-			$table->string('question_4', 128);
+			$table->string('question_1', 128)->nullable(true)->default(null);
+			$table->string('question_2', 128)->nullable(true)->default(null);
+			$table->string('question_3', 128)->nullable(true)->default(null);
+			$table->string('question_4', 128)->nullable(true)->default(null);
+			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});
 	}
@@ -30,6 +31,6 @@ class CreateBirthFormTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('birth_form');
+		Schema::dropIfExists('birth_forms');
 	}
 }

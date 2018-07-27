@@ -8,6 +8,7 @@ use App\UserHelpers;
 use App\Image;
 use App\Manager;
 use App\Teacher;
+use App\Consultant;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
@@ -218,6 +219,49 @@ class UserController extends Controller
 
 		return response()->json([
 			'message' => "The user avatar is updated."
+			], 200);
+	}
+
+	/**
+	 * Set profile avatar
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function setRole(Request $request, $userId, $role)
+	{
+		// Validate request
+		$this->validate($request, [
+			'userId' 		=> 'required|integer'
+			]);
+
+		// Find the user to set role
+		$user = User::find($userId);
+
+		if( !$user ) {
+			return response()->json(['message' => "Unable to find user."], 404);
+		}
+
+		if( $role == 'teacher' ) {
+			$teacher = Teacher::where('userId', $userId)->first();
+			if( !$teacher ) {
+				Teacher::create([
+					'userId' => $userId
+					]);
+			}
+		} else if( $role == 'consultant' ) {
+			$consultant = Consultant::where('userId', $userId)->first();
+			if( !$consultant ) {
+				Consultant::create([
+					'userId' => $userId
+					]);
+			}
+		}
+
+		return response()->json([
+			'message' => 'The user role have been added successfully.'
 			], 200);
 	}
 	

@@ -4,7 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Manager;
 use App\Teacher;
-use App\TeacherStudent;
+use App\Consultant;
 use App\Helpers\RequestHelper;
 use Closure;
 use Illuminate\Http\Request;
@@ -33,16 +33,15 @@ class StudentResourceMiddleware extends Middleware
 		if( $manager )
 			return $next($request);
 		
-		// If user is an active teacher with access to student resources, let them pass
+		// If user is an active teacher, let them pass
 		$teacher = Teacher::where('userId', $user->id)->first();
-		if( !$teacher )
-			return response()->json(['message' => "Invalid request, no valid user."], 404);
-		
-		$studentId 	= $request->route()[2]['studentId'];
-		$access = TeacherStudent::where('teacherId', $teacher->id)->where('studentId', $studentId)->first();
+		if( $teacher )
+			return $next($request);
 
-		if ( $access )
-				return $next($request);
+		// If user is an active consultant, let them pass
+		$consultant = Consultant::where('userId', $user->id)->first();
+		if( $consultant )
+			return $next($request);
 
 		// if user is not a manager, return error 404
 		return response()->json(['message' => "User does not have permission for access."], 404);

@@ -2,13 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Teacher;
+use App\Consultant;
 use App\Helpers\RequestHelper;
 use Closure;
 use \Exception;
 use Illuminate\Http\Request;
 
-class TeacherMiddleware extends Middleware
+class ConsultantMiddleware extends Middleware
 {
 	/**
 	 * Handle an incoming request.
@@ -27,8 +27,8 @@ class TeacherMiddleware extends Middleware
 		if(!$user->active)
 			return response()->json(['message' => "User does not have permission for access."], 404);
 
-		// If user is a teacher, let the request pass
-		if( Teacher::where('userId', $user->id)->first() )
+		// If user is a consultant, let the request pass
+		if( Consultant::where('userId', $user->id)->first() )
 				return $next($request);
 
 		// if user is not a manager, return error 404

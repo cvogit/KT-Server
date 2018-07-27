@@ -13,15 +13,16 @@ class CreateInfancyFormTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('infancy_form', function (Blueprint $table) {
+		Schema::create('infancy_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->tinyInteger('question_1');
-			$table->tinyInteger('question_2');
-			$table->tinyInteger('question_3');
-			$table->text('question_4');
-			$table->string('question_5', 128);
-			$table->text('question_6');
-			$table->text('question_7');
+			$table->tinyInteger('question_1')->nullable(true)->default(null);
+			$table->tinyInteger('question_2')->nullable(true)->default(null);
+			$table->tinyInteger('question_3')->nullable(true)->default(null);
+			$table->text('question_4')->nullable(true)->default(null);
+			$table->string('question_5', 128)->nullable(true)->default(null);
+			$table->text('question_6')->nullable(true)->default(null);
+			$table->text('question_7')->nullable(true)->default(null);
+			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});
 	}
@@ -33,6 +34,6 @@ class CreateInfancyFormTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('infancy_form');
+		Schema::dropIfExists('infancy_forms');
 	}
 }

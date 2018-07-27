@@ -13,17 +13,18 @@ class CreateBasicFormTable extends Migration
 	 */
 	public function up()
 	{
-		Schema::create('basic_form', function (Blueprint $table) {
+		Schema::create('basic_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->string('name');
-			$table->date('birthday');
-			$table->boolean('male')->default(false);
-			$table->boolean('female')->default(false);
-			$table->string('birthplace', 64);
-			$table->string('address', 64);
-			$table->string('phone1', 15);
-			$table->string('phone2', 15);
-			$table->string('email', 64);
+			$table->string('name')->nullable(true)->default(null);
+			$table->date('birthday')->nullable(true)->default(null);
+			$table->boolean('male')->nullable(true)->default(null);
+			$table->boolean('female')->nullable(true)->default(null);
+			$table->string('birthplace', 64)->nullable(true)->default(null);
+			$table->string('address', 64)->nullable(true)->default(null);
+			$table->string('phone1', 15)->nullable(true)->default(null);
+			$table->string('phone2', 15)->nullable(true)->default(null);
+			$table->string('email', 64)->nullable(true)->default(null);
+			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});
 	}
@@ -35,6 +36,6 @@ class CreateBasicFormTable extends Migration
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('basic_form');
+		Schema::dropIfExists('basic_forms');
 	}
 }
