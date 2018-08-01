@@ -15,6 +15,7 @@ use App\BirthForm;
 use App\InfancyForm;
 use App\ToddlerForm;
 use App\FamilyForm;
+use App\IllnessForm;
 use App\EducationForm;
 use App\PresentForm;
 use App\Helpers\RequestHelper;
@@ -45,8 +46,8 @@ class ManagerController extends Controller
 		// Get a list of new users
 		$newUsers = User::where('new', 1)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId']);
 
-		// Get students resources
-		$students = Student::where('active', 1)->get(['id', 'name', 'avatarId']);
+		// Get active students resources
+		$students = Student::where('active', 1)->get();
 		
 		// For each student, get their resources
 		foreach ($students as $student) {
@@ -58,22 +59,58 @@ class ManagerController extends Controller
 
 			// For each report, get student name
 			foreach ($student->reports as $report) {
-				$report->student = Student::Where('id', $report->studentId)->get(['firstName', 'lastName'])->first();
+				$report->student = Student::Where('id', $report->studentId)->get(['name']);
 			}
 
 			// Query all of student forms
-			$student->basicForm 		= BasicForm::Where('id', $student->basicFormId)->get();
-			$student->familyForm 		= FamilyForm::Where('id', $student->familyFormId)->get();
-			$student->pregnancyForm = PregnancyForm::Where('id', $student->pregnancyFormId)->get();
-			$student->birthForm 		= BirthForm::Where('id', $student->birthFormId)->get();
-			$student->infancyForm 	= InfancyForm::Where('id', $student->infancyFormId)->get();
-			$student->toddlerForm 	= ToddlerForm::Where('id', $student->toddlerFormId)->get();
-			$student->educationForm = EducationForm::Where('id', $student->educationFormId)->get();
-			$student->presentForm 	= PresentForm::Where('id', $student->presentFormId)->get();
+			$forms = array(
+				'basicForm'	=> BasicForm::Where('id', $student->basicFormId)->get(),
+				'familyForm'=> FamilyForm::Where('id', $student->familyFormId)->get(),
+				'pregnancyForm'=> PregnancyForm::Where('id', $student->pregnancyFormId)->get(),
+				'birthForm'		=> 	BirthForm::Where('id', $student->birthFormId)->get(),
+				'infancyForm'	=> 	InfancyForm::Where('id', $student->infancyFormId)->get(),
+				'toddlerForm'	=> 	ToddlerForm::Where('id', $student->toddlerFormId)->get(),
+				'illnessForm'	=> 	IllnessForm::Where('id', $student->illnessFormId)->get(),
+				'educationForm'=> EducationForm::Where('id', $student->educationFormId)->get(),
+				'presentForm'	=> 	PresentForm::Where('id', $student->presentFormId)->get(),
+				);
+			$student->forms = $forms;
+		}
+
+		// Get inactive students resources
+		$inactiveStudents = Student::where('active', 0)->get();
+		
+		// For each student, get their resources
+		foreach ($inactiveStudents as $student) {
+			// Query student image list
+			$student->images = StudentImage::Where('studentId', $student->id)->get(['imageId']);
+
+			// Query student report list
+			$student->reports = Report::Where('studentId', $student->id)->get();
+
+			// For each report, get student name
+			foreach ($student->reports as $report) {
+				$report->student = Student::Where('id', $report->studentId)->get(['name']);
+			}
+
+			// Query all of student forms
+			$forms = array(
+				'basicForm'	=> BasicForm::Where('id', $student->basicFormId)->get(),
+				'familyForm'=> FamilyForm::Where('id', $student->familyFormId)->get(),
+				'pregnancyForm'=> PregnancyForm::Where('id', $student->pregnancyFormId)->get(),
+				'birthForm'		=> 	BirthForm::Where('id', $student->birthFormId)->get(),
+				'infancyForm'	=> 	InfancyForm::Where('id', $student->infancyFormId)->get(),
+				'toddlerForm'	=> 	ToddlerForm::Where('id', $student->toddlerFormId)->get(),
+				'illnessForm'	=> 	IllnessForm::Where('id', $student->illnessFormId)->get(),
+				'educationForm'=> EducationForm::Where('id', $student->educationFormId)->get(),
+				'presentForm'	=> 	PresentForm::Where('id', $student->presentFormId)->get(),
+				);
+			$student->forms = $forms;
 		}
 
 		// Get all reports list 
 		$reports = Report::Get();
+
 		// For each report, get student name
 		foreach ($reports as $report) {
 			$report->student = Student::Where('id', $report->studentId)->get(['name'])->first();
@@ -85,6 +122,7 @@ class ManagerController extends Controller
 					'users' 		=> $users,
 					'newUsers' 	=> $newUsers,
 					'students'	=> $students,
+					'inactiveStudents' => $inactiveStudents,
 					'reports'		=> $reports,
 				)
 			], 200);

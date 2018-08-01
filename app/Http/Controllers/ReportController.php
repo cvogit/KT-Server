@@ -29,11 +29,13 @@ class ReportController extends Controller
 			'studentId' 	=> 	'required|integer'
 			]);
 
+		$user = $this->req->getUser();
+
 		$report = Report::create([
 			'userId'		=>	$user->id,
 			'studentId'	=>	$request->studentId
 			]);
-
+		
 		if ( !$report )
 			return response()->json(['message' => "Unable to create report."], 500);
 
@@ -168,7 +170,7 @@ class ReportController extends Controller
 			'message' => "Unable to find report."
 			], 500);
 
-		if( $contentNumber == 2 ) {
+		if( $contentNumber == 1 ) {
 			$consultant = Consultant::where('userId',$user->id)->first();
 			$manager 		= Manager::where('userId',$user->id)->first();
 
@@ -179,11 +181,11 @@ class ReportController extends Controller
 			}
 		}
 
-		if( $contentNumber == 1 ) {
+		if( $contentNumber == 0 ) {
 			$report->content_1 = $request->input('content');
-		} else if( $contentNumber == 2 ) {
+		} else if( $contentNumber == 1 ) {
 			$report->content_2 = $request->input('content');
-		} else if( $contentNumber == 3 ) {
+		} else if( $contentNumber == 2 ) {
 			$report->content_3 = $request->input('content');
 		}
 

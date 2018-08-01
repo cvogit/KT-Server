@@ -79,6 +79,8 @@ class StudentController extends Controller
 			'presentFormId' 	=> $presentForm->id,
 			]);
 
+		return $student;
+
 		return response()->json(['message' => "Student have been created successfully."], 200);
 	}
 
