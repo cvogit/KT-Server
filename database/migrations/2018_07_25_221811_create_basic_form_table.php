@@ -15,15 +15,15 @@ class CreateBasicFormTable extends Migration
 	{
 		Schema::create('basic_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->string('name')->nullable(true)->default(null);
-			$table->date('birthday')->nullable(true)->default(null);
-			$table->boolean('male')->nullable(true)->default(null);
-			$table->boolean('female')->nullable(true)->default(null);
-			$table->string('birthplace', 64)->nullable(true)->default(null);
-			$table->string('address', 64)->nullable(true)->default(null);
-			$table->string('phone1', 15)->nullable(true)->default(null);
-			$table->string('phone2', 15)->nullable(true)->default(null);
-			$table->string('email', 64)->nullable(true)->default(null);
+			$table->string('question_1')->nullable(true)->default(null);
+			$table->date('question_2')->nullable(true)->default(null);
+			$table->boolean('question_3')->nullable(true)->default(null);
+			$table->boolean('question_4')->nullable(true)->default(null);
+			$table->string('question_5', 64)->nullable(true)->default(null);
+			$table->string('question_6', 64)->nullable(true)->default(null);
+			$table->string('question_7', 15)->nullable(true)->default(null);
+			$table->string('question_8', 15)->nullable(true)->default(null);
+			$table->string('question_9', 64)->nullable(true)->default(null);
 			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});

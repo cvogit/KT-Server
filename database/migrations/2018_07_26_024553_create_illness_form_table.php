@@ -15,7 +15,7 @@ class CreateIllnessFormTable extends Migration
 	{
 		Schema::create('illness_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->text('question_1');
+			$table->text('question_1')->nullable(true)->default(null);
 			$table->boolean('question_2')->nullable(true)->default(null);
 			$table->boolean('question_3')->nullable(true)->default(null);
 			$table->boolean('question_4')->nullable(true)->default(null);
