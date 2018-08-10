@@ -15,7 +15,7 @@ class CreateIllnessFormTable extends Migration
 	{
 		Schema::create('illness_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->text('question_1')->nullable(true)->default(null);
+			$table->boolean('question_1')->nullable(true)->default(null);
 			$table->boolean('question_2')->nullable(true)->default(null);
 			$table->boolean('question_3')->nullable(true)->default(null);
 			$table->boolean('question_4')->nullable(true)->default(null);
@@ -32,8 +32,8 @@ class CreateIllnessFormTable extends Migration
 			$table->boolean('question_15')->nullable(true)->default(null);
 			$table->boolean('question_16')->nullable(true)->default(null);
 			$table->text('question_17')->nullable(true)->default(null);
-			$table->tinyInteger('question_18')->nullable(true)->default(null);
-			$table->text('question_19')->nullable(true)->default(null);
+			$table->text('question_18')->nullable(true)->default(null);
+			$table->boolean('question_19')->nullable(true)->default(null);
 			$table->boolean('question_20')->nullable(true)->default(null);
 			$table->boolean('question_21')->nullable(true)->default(null);
 			$table->boolean('question_22')->nullable(true)->default(null);
@@ -46,7 +46,6 @@ class CreateIllnessFormTable extends Migration
 			$table->text('question_29')->nullable(true)->default(null);
 			$table->text('question_30')->nullable(true)->default(null);
 			$table->text('question_31')->nullable(true)->default(null);
-			$table->text('question_32')->nullable(true)->default(null);
 			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});

@@ -26,18 +26,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updateBasicForm(Request $request, $studentId)
+	public function updateBasicForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the basic form
-		$form = BasicForm::find($student->basicFormId);
+		$form = BasicForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -50,16 +42,16 @@ class FormController extends Controller
 				], 400);
 		}
 
-		$form->name 			= $request->input('name');
-		$form->birthday 	= $request->input('birthday');
-		$form->male 			= $request->input('male');
-		$form->female 		= $request->input('female');
-		$form->birthplace = $request->input('birthplace');
-		$form->address 		= $request->input('address');
-		$form->phone1 		= $request->input('phone1');
-		$form->phone2 		= $request->input('phone2');
-		$form->email 			= $request->input('email');
-		$form->new 	= false;
+		$form->question_1 = $request->input('question_1');
+		$form->question_2 = $request->input('question_2');
+		$form->question_3 = $request->input('question_3');
+		$form->question_4 = $request->input('question_4');
+		$form->question_5 = $request->input('question_5');
+		$form->question_6 = $request->input('question_6');
+		$form->question_7 = $request->input('question_7');
+		$form->question_8 = $request->input('question_8');
+		$form->question_9 = $request->input('question_9');
+		//$form->new 	= false;
 
 		$form->save();
 
@@ -75,18 +67,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updatePregnancyForm(Request $request, $studentId)
+	public function updatePregnancyForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the pregnancy form
-		$form = PregnancyForm::find($student->pregnancyFormId);
+		$form = PregnancyForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -114,7 +98,7 @@ class FormController extends Controller
 		$form->question_13 = $request->input('question_13');
 		$form->question_14 = $request->input('question_14');
 		$form->question_15 = $request->input('question_15');
-		$form->new 	= false;
+		//$form->new 	= false;
 
 		$form->save();
 
@@ -130,18 +114,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updateBirthForm(Request $request, $studentId)
+	public function updateBirthForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the birth form
-		$form = BirthForm::find($student->birthFormId);
+		$form = BirthForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -158,7 +134,7 @@ class FormController extends Controller
 		$form->question_2 = $request->input('question_2');
 		$form->question_3 = $request->input('question_3');
 		$form->question_4 = $request->input('question_4');
-		$form->new 	= false;
+		//$form->new 	= false;
 
 		$form->save();
 
@@ -174,18 +150,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updateInfancyForm(Request $request, $studentId)
+	public function updateInfancyForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the infancy form
-		$form = InfancyForm::find($student->infancyFormId);
+		$form = InfancyForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -205,7 +173,7 @@ class FormController extends Controller
 		$form->question_5 = $request->input('question_5');
 		$form->question_6 = $request->input('question_6');
 		$form->question_7 = $request->input('question_7');
-		$form->new 	= false;
+		//$form->new 	= false;
 
 		$form->save();
 
@@ -221,18 +189,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updateToddlerForm(Request $request, $studentId)
+	public function updateToddlerForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the toddler form
-		$form = ToddlerForm::find($student->toddlerFormId);
+		$form = ToddlerForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -268,7 +228,7 @@ class FormController extends Controller
 		$form->question_15 = $request->input('question_21');
 		$form->question_15 = $request->input('question_22');
 
-		$form->new 	= false;
+		//$form->new 	= false;
 
 		$form->save();
 
@@ -284,18 +244,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updateFamilyForm(Request $request, $studentId)
+	public function updateFamilyForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the family form
-		$form = FamilyForm::find($student->familyFormId);
+		$form = FamilyForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -321,7 +273,7 @@ class FormController extends Controller
 		$form->question_11 = $request->input('question_11');
 		$form->question_12 = $request->input('question_12');
 
-		$form->new 	= false;
+		//$form->new 	= false;
 
 		$form->save();
 
@@ -337,18 +289,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updateIllnessForm(Request $request, $studentId)
+	public function updateIllnessForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the family form
-		$form = IllnessForm::find($student->illnessFormId);
+		$form = IllnessForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -392,7 +336,6 @@ class FormController extends Controller
 		$form->question_10 = $request->input('question_29');
 		$form->question_11 = $request->input('question_30');
 		$form->question_12 = $request->input('question_31');
-		$form->question_10 = $request->input('question_32');
 		$form->new 	= false;
 
 		$form->save();
@@ -409,18 +352,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updateEducationForm(Request $request, $studentId)
+	public function updateEducationForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the family form
-		$form = EducationForm::find($student->educationFormId);
+		$form = EducationForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -439,9 +374,6 @@ class FormController extends Controller
 		$form->question_4 = $request->input('question_4');
 		$form->question_5 = $request->input('question_5');
 		$form->question_6 = $request->input('question_6');
-		$form->question_7 = $request->input('question_7');
-		$form->question_8 = $request->input('question_8');
-		$form->question_9 = $request->input('question_9');
 
 		$form->new 	= false;
 
@@ -459,18 +391,10 @@ class FormController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function updatePresentForm(Request $request, $studentId)
+	public function updatePresentForm(Request $request, $formId)
 	{
-		// Find the student
-		$student = Student::find($studentId);
-		if( !$student ) {
-			return response()->json([
-				'message' => "Unable to find student."
-				], 404);
-		}
-
 		// Find the family form
-		$form = PresentForm::find($student->presentFormId);
+		$form = PresentForm::find($formId);
 		if( !$form ) {
 			return response()->json([
 				'message' => "Unable to find form."
@@ -488,7 +412,7 @@ class FormController extends Controller
 		$form->question_3 = $request->input('question_3');
 		$form->question_4 = $request->input('question_4');
 
-		$form->new 	= false;
+		//$form->new 	= false;
 
 		$form->save();
 

@@ -16,9 +16,9 @@ class CreateBirthFormTable extends Migration
 		Schema::create('birth_forms', function (Blueprint $table) {
 			$table->increments('id');
 			$table->string('question_1', 128)->nullable(true)->default(null);
-			$table->string('question_2', 128)->nullable(true)->default(null);
-			$table->string('question_3', 128)->nullable(true)->default(null);
-			$table->string('question_4', 128)->nullable(true)->default(null);
+			$table->text('question_2')->nullable(true)->default(null);
+			$table->text('question_3')->nullable(true)->default(null);
+			$table->text('question_4')->nullable(true)->default(null);
 			$table->boolean('new')->default(true);
 			$table->timestamps();
 		});

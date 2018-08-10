@@ -15,11 +15,11 @@ class CreateFamilyFormTable extends Migration
 	{
 		Schema::create('family_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->string('question_1')->nullable(true)->default(null);
+			$table->string('question_1', 64)->nullable(true)->default(null);
 			$table->date('question_2')->nullable(true)->default(null);
 			$table->string('question_3', 64)->nullable(true)->default(null);
 			$table->string('question_4', 64)->nullable(true)->default(null);
-			$table->string('question_5')->nullable(true)->default(null);
+			$table->string('question_5', 64)->nullable(true)->default(null);
 			$table->date('question_6')->nullable(true)->default(null);
 			$table->string('question_7', 64)->nullable(true)->default(null);
 			$table->string('question_8', 64)->nullable(true)->default(null);

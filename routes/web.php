@@ -83,18 +83,18 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
 
   	$router->get('/students/{studentId}/reports',		'ReportController@getStudentReportsList');
 
-  	$router->put('students/{studentId}/forms/basic', 			'FormController@updateBasicForm');
-  	$router->put('students/{studentId}/forms/pregnancy', 	'FormController@updatePregnancyForm');
-  	$router->put('students/{studentId}/forms/birth', 			'FormController@updateBirthForm');
-  	$router->put('students/{studentId}/forms/infancy', 		'FormController@updateInfancyForm');
-  	$router->put('students/{studentId}/forms/toddler', 		'FormController@updateToddlerForm');
-  	$router->put('students/{studentId}/forms/family', 		'FormController@updateFamilyForm');
-  	$router->put('students/{studentId}/forms/illness', 		'FormController@updateIllnessForm');
-  	$router->put('students/{studentId}/forms/education', 	'FormController@updateEducationForm');
-  	$router->put('students/{studentId}/forms/present', 		'FormController@updatePresentForm');
+  	$router->put('forms/basic/{formId}', 			'FormController@updateBasicForm');
+  	$router->put('forms/pregnancy/{formId}', 	'FormController@updatePregnancyForm');
+  	$router->put('forms/birth/{formId}', 			'FormController@updateBirthForm');
+  	$router->put('forms/infancy/{formId}', 		'FormController@updateInfancyForm');
+  	$router->put('forms/toddler/{formId}', 		'FormController@updateToddlerForm');
+  	$router->put('forms/family/{formId}', 		'FormController@updateFamilyForm');
+  	$router->put('forms/illness/{formId}', 		'FormController@updateIllnessForm');
+  	$router->put('forms/education/{formId}', 	'FormController@updateEducationForm');
+  	$router->put('forms/present/{formId}', 		'FormController@updatePresentForm');
 
 		$router->post('/reports',											'ReportController@create');
-		$router->put('/reports/{reportId}/contents/{contentNumber}',	'ReportController@update');
+		$router->put('/reports/{reportId}/contents/{reportPart}',	'ReportController@update');
 
 	});
 

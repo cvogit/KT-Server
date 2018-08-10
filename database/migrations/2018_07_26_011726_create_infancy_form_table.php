@@ -15,11 +15,11 @@ class CreateInfancyFormTable extends Migration
 	{
 		Schema::create('infancy_forms', function (Blueprint $table) {
 			$table->increments('id');
-			$table->tinyInteger('question_1')->nullable(true)->default(null);
-			$table->tinyInteger('question_2')->nullable(true)->default(null);
-			$table->tinyInteger('question_3')->nullable(true)->default(null);
-			$table->text('question_4')->nullable(true)->default(null);
-			$table->string('question_5', 128)->nullable(true)->default(null);
+			$table->string('question_1', 32)->nullable(true)->default(null);
+			$table->string('question_2', 32)->nullable(true)->default(null);
+			$table->string('question_3', 32)->nullable(true)->default(null);
+			$table->string('question_4', 32)->nullable(true)->default(null);
+			$table->string('question_5', 32)->nullable(true)->default(null);
 			$table->text('question_6')->nullable(true)->default(null);
 			$table->text('question_7')->nullable(true)->default(null);
 			$table->boolean('new')->default(true);

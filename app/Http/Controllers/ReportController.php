@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Consultant;
 use App\Manager;
 use App\Report;
 use App\User;
@@ -26,6 +27,7 @@ class ReportController extends Controller
 	{
 		// Validate request
 		$this->validate($request, [
+			'content' 		=>  'required',
 			'studentId' 	=> 	'required|integer'
 			]);
 
@@ -33,7 +35,8 @@ class ReportController extends Controller
 
 		$report = Report::create([
 			'userId'		=>	$user->id,
-			'studentId'	=>	$request->studentId
+			'studentId'	=>	$request->studentId,
+			'content_1' => 	$request->content,
 			]);
 		
 		if ( !$report )
@@ -155,7 +158,7 @@ class ReportController extends Controller
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function update(Request $request, $reportId, $contentNumber)
+	public function update(Request $request, $reportId, $reportPart)
 	{
 		// Validate request
 		$this->validate($request, [
@@ -170,7 +173,7 @@ class ReportController extends Controller
 			'message' => "Unable to find report."
 			], 500);
 
-		if( $contentNumber == 1 ) {
+		if( $reportPart == 1 ) {
 			$consultant = Consultant::where('userId',$user->id)->first();
 			$manager 		= Manager::where('userId',$user->id)->first();
 
@@ -181,11 +184,11 @@ class ReportController extends Controller
 			}
 		}
 
-		if( $contentNumber == 0 ) {
+		if( $reportPart == 1 ) {
 			$report->content_1 = $request->input('content');
-		} else if( $contentNumber == 1 ) {
+		} else if( $reportPart == 2 ) {
 			$report->content_2 = $request->input('content');
-		} else if( $contentNumber == 2 ) {
+		} else if( $reportPart == 3 ) {
 			$report->content_3 = $request->input('content');
 		}
 
