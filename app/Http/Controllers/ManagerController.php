@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Consultant;
 use App\Image;
 use App\User;
 use App\UserImage;
@@ -43,6 +44,26 @@ class ManagerController extends Controller
 		// Get active user list, not including self
 		$users 		= User::where('active', 1)->where('id', '!=', $currentUser->id)->get(['id', 'email', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId']);
 
+		// For each user, get their roles information
+		foreach ($users as $user) {
+
+			// Check if user is a teacher
+			$teacher = Teacher::where('userId', $user->id)->first();
+			if($teacher) {
+				$user->teacher = 1;
+			} else {
+				$user->teacher = 0;
+			}
+
+			// Check if user is a consultant
+			$teacher = Consultant::where('userId', $user->id)->first();
+			if($teacher) {
+				$user->consultant = 1;
+			} else {
+				$user->consultant = 0;
+			}
+		}
+
 		// Get a list of new users
 		$newUsers = User::where('new', 1)->get(['id', 'firstName','lastName', 'phoneNum', 'lastLogin', 'avatarId']);
 
@@ -59,7 +80,7 @@ class ManagerController extends Controller
 
 			// For each report, get student name
 			foreach ($student->reports as $report) {
-				$report->student = Student::Where('id', $report->studentId)->get(['name']);
+				$report->student = Student::Where('id', $report->studentId)->get(['name'])->first();
 			}
 
 			// Query all of student forms

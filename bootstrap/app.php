@@ -67,6 +67,7 @@ $app->routeMiddleware([
     'auth'      => App\Http\Middleware\Authenticate::class,
     'manager'   => App\Http\Middleware\ManagerMiddleware::class,
     'teacher'   => App\Http\Middleware\TeacherMiddleware::class,
+    'consultant'=> App\Http\Middleware\ConsultantMiddleware::class,
     'manager_teacher'   => App\Http\Middleware\ManagerTeacherMiddleware::class,
     'teacherResource'   => App\Http\Middleware\TeacherResourceMiddleware::class,
     'studentResource'   => App\Http\Middleware\StudentResourceMiddleware::class,

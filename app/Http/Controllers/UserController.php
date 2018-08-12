@@ -91,6 +91,42 @@ class UserController extends Controller
 	}
 
 	/**
+	 * Delete a user role
+	 *
+	 * @param \Illuminate\Http\Request
+	 * @param integer
+	 *
+	 * @return \Illuminate\Http\Response
+	 */
+	public function deleteRole(Request $request, $userId, $role)
+	{
+		// Find the user to set role
+		$user = User::find($userId);
+
+		if( !$user ) {
+			return response()->json(['message' => "Unable to find user."], 404);
+		}
+
+		if( $role == 'teacher' ) {
+			$teacher = Teacher::where('userId', $userId)->first();
+			if( $teacher ) {
+				$teacher->delete();
+			}
+		} else if( $role == 'consultant' ) {
+			$consultant = Consultant::where('userId', $userId)->first();
+			if( $consultant ) {
+				$consultant->delete();
+			}
+		} else {
+			return response()->json(['message' => "Incorrect role."], 404);
+		}
+
+		return response()->json([
+			'message' => 'The user role have been removed successfully.'
+			], 200);
+	}
+
+	/**
 	 * Get an user info
 	 *
 	 * @param \Illuminate\Http\Request
@@ -109,9 +145,12 @@ class UserController extends Controller
 
 		// Get users roles
 		if( Manager::where('userId', $userId)->first() )
-			$roles = $roles . 'manager';
+			$roles = $roles . ' manager';
 		if( Teacher::where('userId', $userId)->first() )
 			$roles = $roles . ' teacher';
+		if( Consultant::where('userId', $userId)->first() )
+			$roles = $roles . ' consultant';
+
 		$user[0]->roles = $roles;
 
 		// Get user images id
@@ -179,6 +218,8 @@ class UserController extends Controller
 			$roles = $roles . 'manager';
 		if( Teacher::where('userId', $userId)->first() )
 			$roles = $roles . ' teacher';
+		if( Consultant::where('userId', $userId)->first() )
+			$roles = $roles . ' consultant';
 
 		return response()->json([
 			'message' => "Succesfully fetch user roles.",
@@ -223,7 +264,7 @@ class UserController extends Controller
 	}
 
 	/**
-	 * Set profile avatar
+	 * Set user role
 	 *
 	 * @param \Illuminate\Http\Request
 	 * @param integer
@@ -232,11 +273,6 @@ class UserController extends Controller
 	 */
 	public function setRole(Request $request, $userId, $role)
 	{
-		// Validate request
-		$this->validate($request, [
-			'userId' 		=> 'required|integer'
-			]);
-
 		// Find the user to set role
 		$user = User::find($userId);
 

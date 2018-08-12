@@ -57,6 +57,11 @@ $router->group(['middleware' => 'jwt'], function () use ($router) {
   	$router->get('/teachers/resources', 					'TeacherController@getTeacherResource');
 	});
 
+	// Access for any consultant
+	$router->group(['middleware' => 'consultant'], function () use ($router) {
+  	$router->get('/consultants/resources', 				'ConsultantController@getConsultantResource');
+	});
+
 	// Access for any teacher or manager
 	$router->group(['middleware' => 'manager_teacher'], function () use ($router) {
 	  $router->post('/students', 												'StudentController@create');

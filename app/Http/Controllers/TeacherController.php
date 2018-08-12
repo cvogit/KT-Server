@@ -15,6 +15,7 @@ use App\BirthForm;
 use App\InfancyForm;
 use App\ToddlerForm;
 use App\FamilyForm;
+use App\IllnessForm;
 use App\EducationForm;
 use App\PresentForm;
 
@@ -24,37 +25,6 @@ use Illuminate\Http\Response;
 
 class TeacherController extends Controller
 {
-	/**
-	 * Deactivate a teacher
-	 *
-	 * @param \Illuminate\Http\Request
-	 * @param integer
-	 *
-	 * @return \Illuminate\Http\Response
-	 */
-	public function deactivate(Request $request, $teacherId)
-	{
-		if ( !$this->req->isValidInt($teacherId) )
-			return response()->json(['message' => 'Invalid request.'], 404);
-
-		// Find teacher to be deactivate
-		$teacher = Teacher::find($teacherId);
-
-		// Return error if can't find user with $id in db
-		if( !$teacher )
-			return response()->json(['message' => 'Unable to find teacher.'], 404);
-
-		if ( !$teacher->active )
-			return response()->json(['message' => 'Invalid request, the teacher is already not active.'], 404);
-
-		$teacher->active = 0;
-		$teacher->save();
-
-		return response()->json([
-			'message' => 'The teacher have been deactivated successfully.'
-			], 200);
-	}
-
 	/**
 	 * Return a teacher detail
 	 *
@@ -154,14 +124,18 @@ class TeacherController extends Controller
 			}
 
 			// Query all of student forms
-			$student->basicForm 		= BasicForm::Where('id', $student->basicFormId)->get();
-			$student->familyForm 		= FamilyForm::Where('id', $student->familyFormId)->get();
-			$student->pregnancyForm = PregnancyForm::Where('id', $student->pregnancyFormId)->get();
-			$student->birthForm 		= BirthForm::Where('id', $student->birthFormId)->get();
-			$student->infancyForm 	= InfancyForm::Where('id', $student->infancyFormId)->get();
-			$student->toddlerForm 	= ToddlerForm::Where('id', $student->toddlerFormId)->get();
-			$student->educationForm = EducationForm::Where('id', $student->educationFormId)->get();
-			$student->presentForm 	= PresentForm::Where('id', $student->presentFormId)->get();
+			$forms = array(
+				'basicForm'	=> BasicForm::Where('id', $student->basicFormId)->get(['question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6', 'question_7', 'question_8', 'question_9']),
+				'familyForm'=> FamilyForm::Where('id', $student->familyFormId)->get(['question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6', 'question_7', 'question_8', 'question_9', 'question_10', 'question_11', 'question_12']),
+				'pregnancyForm'=> PregnancyForm::Where('id', $student->pregnancyFormId)->get(['question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6', 'question_7', 'question_8', 'question_9', 'question_10', 'question_11', 'question_12', 'question_13', 'question_14', 'question_15']),
+				'birthForm'		=> 	BirthForm::Where('id', $student->birthFormId)->get(['question_1', 'question_2', 'question_3', 'question_4']),
+				'infancyForm'	=> 	InfancyForm::Where('id', $student->infancyFormId)->get(['question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6', 'question_7']),
+				'toddlerForm'	=> 	ToddlerForm::Where('id', $student->toddlerFormId)->get(['question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6', 'question_7', 'question_8', 'question_9', 'question_10', 'question_11', 'question_12', 'question_13', 'question_14', 'question_15', 'question_16', 'question_17', 'question_18', 'question_19', 'question_20', 'question_21', 'question_22']),
+				'illnessForm'	=> 	IllnessForm::Where('id', $student->illnessFormId)->get(['question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6', 'question_7', 'question_8', 'question_9', 'question_10', 'question_11', 'question_12', 'question_13', 'question_14', 'question_15', 'question_16', 'question_17', 'question_18', 'question_19', 'question_20', 'question_21', 'question_22', 'question_23', 'question_24', 'question_25', 'question_26', 'question_27', 'question_28', 'question_29', 'question_30', 'question_31']),
+				'educationForm'=> EducationForm::Where('id', $student->educationFormId)->get(['question_1', 'question_2', 'question_3', 'question_4', 'question_5', 'question_6']),
+				'presentForm'	=> 	PresentForm::Where('id', $student->presentFormId)->get(['question_1', 'question_2', 'question_3', 'question_4']),
+				);
+			$student->forms = $forms;
 		}
 
 		// Get all teacher reports
